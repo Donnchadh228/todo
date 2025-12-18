@@ -5,34 +5,34 @@ jest.mock("../models/GroupModel");
 
 // Create - full oject
 // update - full objet
-// destroy - 1 or 0
-// get - {count: length ,objects[]}
+// destroy - 1
+// get - {count: length ,rows: objects[]}
 
 describe("Group test", () => {
+  const modelGroup = { id: 1, name: "Group", userId: 42, createAt: new Date(), updateAt: new Date() };
+
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  const modelGroup = { id: 1, name: "Группа", userId: 42, createAt: new Date(), updateAt: new Date() };
-
-  it("Должен создать группу и вернуть её данные от БД", async () => {
+  it("Must create a group and return its data from the DB", async () => {
     const inputData = { ...modelGroup };
 
     Group.create.mockResolvedValue(inputData);
 
-    const result = await groupService.createGroup("Группа", 42);
+    const result = await groupService.createGroup("Group", 42);
 
     expect(Group.create).toHaveBeenCalledTimes(1);
 
     expect(Group.create).toHaveBeenCalledWith({
-      name: "Группа",
+      name: "Group",
       userId: 42,
     });
 
     expect(result).toEqual(inputData);
   });
 
-  it("Должен найти группу, изменить имя и сохранить", async () => {
+  it("Must find the group, change the name and save", async () => {
     const newName = "New name2";
     const mockGroup = { ...modelGroup };
 
@@ -45,7 +45,7 @@ describe("Group test", () => {
 
     Group.findByPk.mockResolvedValue(mockGroup);
 
-    const result = await groupService.changeGroup(1, newName);
+    const result = await groupService.changeGroup(1, "New name2");
 
     expect(Group.findByPk).toHaveBeenCalledTimes(1);
     expect(Group.findByPk).toHaveBeenCalledWith(1);
@@ -53,7 +53,7 @@ describe("Group test", () => {
     expect(mockSave).toHaveBeenCalledTimes(1);
     expect(result.name).toBe(newName);
   });
-  it("Должен удалить группу", async () => {
+  it("must delete group", async () => {
     const id = 1;
     Group.destroy.mockResolvedValue(1);
 
@@ -63,7 +63,7 @@ describe("Group test", () => {
     expect(Group.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
     expect(result).toBe(1);
   });
-  it("Должен получить все группы польователя", async () => {
+  it("Should get all user groups", async () => {
     const userId = 1;
     const limit = 2;
     const offset = 2;
@@ -78,7 +78,6 @@ describe("Group test", () => {
     Group.findAndCountAll.mockResolvedValue({ count: allGroup.length, rows: allGroup.slice(offset, offset + limit) });
 
     const result = await groupService.getAllGroup(limit, offset, userId);
-    console.log(result);
 
     expect(result.count).toBe(4);
     expect(result.rows).toHaveLength(2);
