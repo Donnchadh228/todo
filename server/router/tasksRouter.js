@@ -8,7 +8,7 @@ const { taskValidation } = require("../validation/taskValidation");
 // create - delete - change - readAll - read
 router.post("/", taskValidation, taskController.createTask);
 router.delete("/:id", taskPermissionMiddleware, taskController.deleteTask);
-router.put("/:id", taskValidation, taskPermissionMiddleware, taskController.changeStatus);
+router.put("/:id", taskValidation, taskPermissionMiddleware, taskController.changeTask);
 router.get("/", taskController.getAll);
 
 module.exports = router;

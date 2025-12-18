@@ -14,7 +14,7 @@ class TaskController {
     }
   }
 
-  async changeStatus(req, res, next) {
+  async changeTask(req, res, next) {
     try {
       const { id } = req.params;
       const changedParams = req.body;
