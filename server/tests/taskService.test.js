@@ -7,10 +7,14 @@ describe("Task test", () => {
   const modelTask = { id: 1, name: "nameTask", userId: 42, groupId: null, createAt: new Date(), updateAt: new Date() };
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
-  test("Must create a task and return its data from the DB.", async () => {
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("Must create a task and return its data from the DB.", async () => {
     Task.create.mockResolvedValue({ ...modelTask });
 
     const result = await taskService.createTask("Task", 2, null);
@@ -23,10 +27,11 @@ describe("Task test", () => {
       groupId: null,
     });
   });
-  test("Must find the task, change the data and save it ", async () => {
+  it("Must find the task, change the data and save it ", async () => {
     const name = "newTask";
     const mockTask = { ...modelTask };
 
+    //mock that emulates the mutation of an object and its storage in the database
     const mockUpdate = jest.fn().mockImplementation(() => {
       mockTask.name = name;
       return mockTask;
@@ -68,7 +73,9 @@ describe("Task test", () => {
       { ...modelTask, id: 3, name: "task3" },
       { ...modelTask, id: 4, name: "task4" },
     ];
-    Task.findAndCountAll.mockResolvedValue({ count: allTask.length, rows: allTask.slice(offset, offset + limit) });
+
+    const params = { count: allTask.length, rows: allTask.slice(offset, offset + limit) };
+    Task.findAndCountAll.mockResolvedValue(params);
 
     const result = await taskService.getAllTasks(limit, offset, userId);
     expect(result.count).toBe(4);
