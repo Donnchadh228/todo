@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
       return next(ApiError.BadRequest("Задача не найдена"));
     }
     if (task.userId !== userId) {
-      return next(ApiError.BadRequest("У вас нет прав на эту задачу"));
+      return next(ApiError.Forbidden());
     }
 
     req.task = task;

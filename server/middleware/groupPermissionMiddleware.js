@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
       return next(ApiError.BadRequest("Группа не найдена"));
     }
     if (group.userId !== userId) {
-      return next(ApiError.BadRequest("У вас нет прав на эту группу"));
+      return next(ApiError.Forbidden());
     }
 
     req.group = group;
