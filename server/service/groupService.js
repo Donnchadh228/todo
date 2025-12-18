@@ -10,6 +10,7 @@ class GroupService {
     const group = await Group.findByPk(id);
     group.name = name;
     await group.save();
+
     return group;
   }
   async removeGroup(id) {
