@@ -9,11 +9,11 @@ class TaskService {
     const task = await Task.findByPk(taskId);
     const newTask = new TaskDto(updates);
 
-    await task.update(newTask);
+    await task.update({ ...newTask });
     return task;
   }
-  async getAllTasks(limit, offset) {
-    const tasks = await Task.findAndCountAll({ limit, offset });
+  async getAllTasks(limit, offset, userId) {
+    const tasks = await Task.findAndCountAll({ where: { userId }, limit, offset });
     return tasks;
   }
   async removeTask(taskId) {

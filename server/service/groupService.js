@@ -16,8 +16,8 @@ class GroupService {
     const group = await Group.destroy({ where: { id } });
     return group;
   }
-  async getAllGroup(limit, offset) {
-    const groups = await Group.findAndCountAll({ limit, offset });
+  async getAllGroup(limit, offset, userId) {
+    const groups = await Group.findAndCountAll({ where: { userId }, limit, offset });
     return groups;
   }
 }
