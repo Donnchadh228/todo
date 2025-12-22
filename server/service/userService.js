@@ -50,16 +50,33 @@ class UserService {
     const token = await tokenService.removeToken(id, refreshToken);
     return token;
   }
-  async refreshToken(refreshToken, tokenId) {
-    const userData = await tokenService.validationAndFindRefreshToken(refreshToken, tokenId);
+  async rotateRefreshToken(refreshToken, tokenId) {
+    const payload = tokenService.validateRefreshToken(refreshToken);
+    if (!payload) {
+      throw ApiError.UnauthorizedError("Пользователь не авторизованный");
+    }
 
-    const userById = await User.findByPk(userData.id);
+    const dataFromDb = await Token.findOne({
+      where: { id: tokenId, refreshToken },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "login", "role"],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
 
-    const user = new UserDto(userById);
+    if (!dataFromDb) {
+      throw ApiError.UnauthorizedError("Пользователь не авторизованный");
+    }
+    console.log(dataFromDb);
+    const userDto = new UserDto(dataFromDb.User);
+    console.log(userDto);
+    const data = await tokenService.updateToken(userDto, dataFromDb.refreshToken, tokenId);
 
-    const token = await tokenService.updateToken(user, refreshToken, tokenId);
-
-    return token;
+    return data;
   }
 }
 

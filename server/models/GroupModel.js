@@ -1,18 +1,17 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../bd.js");
+module.exports = (sequelize, DataTypes) => {
+  const Group = sequelize.define("group", {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, unique: false, allowNull: false },
+  });
 
-const Group = sequelize.define("group", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: false, allowNull: false },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "users",
-      key: "id",
-    },
-    onDelete: "CASCADE",
-  },
-});
+  Group.associate = function (models) {
+    Group.belongsTo(models.User, {
+      foreignKey: "userId",
+    });
+    Group.hasMany(models.Task, {
+      foreignKey: "groupId",
+    });
+  };
 
-module.exports = Group;
+  return Group;
+};

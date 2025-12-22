@@ -19,7 +19,7 @@ class TaskController {
       const { id } = req.params;
       const changedParams = req.body;
 
-      const task = await taskService.changeTask(id, changedParams);
+      const task = await taskService.changeTask(id, changedParams, req.user.id);
 
       res.json(task);
     } catch (error) {
@@ -47,6 +47,18 @@ class TaskController {
     try {
       const { id } = req.params;
       const task = await taskService.removeTask(id);
+      res.json(task);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+  async getOne(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const task = await taskService.getOne(id);
+
       res.json(task);
     } catch (error) {
       console.log(error);

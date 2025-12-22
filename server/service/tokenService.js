@@ -13,6 +13,7 @@ class TokenService {
 
     return { accessToken, refreshToken };
   }
+
   async saveToken(userId, refreshToken) {
     const decoded = jwt.decode(refreshToken);
     const expiryDate = new Date(decoded.exp * 1000);
@@ -21,11 +22,11 @@ class TokenService {
   }
 
   async removeToken(id, refreshToken) {
-    const token = await Token.destroy({ where: { id, refreshToken } });
-    if (!token) {
+    const isDeleted = await Token.destroy({ where: { id, refreshToken } });
+    if (!isDeleted) {
       throw ApiError.BadRequest("Ошибка при удалении токена");
     }
-    return token;
+    return isDeleted;
   }
 
   validateAccessToken(accessToken) {
@@ -44,20 +45,6 @@ class TokenService {
     } catch (error) {
       return null;
     }
-  }
-
-  async validationAndFindRefreshToken(refreshToken, tokenId) {
-    if (!refreshToken) {
-      throw ApiError.BadRequest("Токена нет");
-    }
-
-    const userData = this.validateRefreshToken(refreshToken);
-
-    const tokenRecord = await Token.findOne({ where: { id: tokenId } });
-    if (!userData || !tokenRecord) {
-      throw ApiError.BadRequest("Токен не валиден либо его нет в базе данных");
-    }
-    return userData;
   }
 
   async updateToken(userData, refreshToken, tokenIdDb) {

@@ -1,7 +1,9 @@
-const Task = require("../models/TaskModel");
+const { Task, Group } = require("../models/indexModel.js");
 const taskService = require("../service/taskService");
+const groupService = require("../service/groupService.js");
 
-jest.mock("../models/TaskModel");
+jest.mock("../models/indexModel");
+jest.mock("../service/groupService.js");
 
 describe("Task test", () => {
   const modelTask = { id: 1, name: "nameTask", userId: 42, groupId: null, createAt: new Date(), updateAt: new Date() };
@@ -28,26 +30,25 @@ describe("Task test", () => {
     });
   });
   it("Must find the task, change the data and save it ", async () => {
-    const name = "newTask";
+    const newName = "newTask";
     const mockTask = { ...modelTask };
 
     //mock that emulates the mutation of an object and its storage in the database
-    const mockUpdate = jest.fn().mockImplementation(() => {
-      mockTask.name = name;
-      return mockTask;
+    mockTask.update = jest.fn().mockImplementation(function (updates) {
+      Object.assign(this, updates);
+      return this;
     });
 
-    mockTask.update = mockUpdate;
+    Task.findByPk.mockResolvedValue({ ...mockTask });
 
-    Task.findByPk.mockResolvedValue(mockTask);
-
-    const result = await taskService.changeTask(1, { name: "newTask" });
+    groupService.getOneGroup.mockResolvedValue({ userId: 2 });
+    const result = await taskService.changeTask(1, { name: "newTask" }, 2);
 
     expect(Task.findByPk).toHaveBeenCalledTimes(1);
     expect(Task.findByPk).toHaveBeenCalledWith(1);
 
-    expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(result.name).toBe("newTask");
+    expect(result.update).toHaveBeenCalledTimes(1);
+    expect(result).toEqual({ ...mockTask, name: newName, status: 0, groupId: undefined });
   });
 
   it("Must delete task", async () => {
@@ -83,6 +84,6 @@ describe("Task test", () => {
 
     expect(result.rows[0]).toEqual(allTask[2]);
 
-    expect(result.rows).toEqual([allTask[2], allTask[3]]);
+    expect(result).toEqual({ count: 4, rows: [allTask[2], allTask[3]] });
   });
 });
