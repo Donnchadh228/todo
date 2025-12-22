@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const sequelize = require("./bd");
+const { sequelize } = require("./bd");
 const router = require("./router/indexRouter");
 const errorMiddleware = require("./middleware/errorMiddleware");
 
@@ -17,8 +17,8 @@ app.use(errorMiddleware);
 
 const start = async () => {
   try {
-    await sequelize.authenticate();
     await sequelize.sync();
+    await sequelize.authenticate();
 
     require("./jobs/tokenCleanup");
 

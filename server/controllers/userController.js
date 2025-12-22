@@ -45,7 +45,8 @@ class UserController {
     try {
       const { tokenId } = req.body;
       const { refreshToken } = req.cookies;
-      const userData = await userService.refreshToken(refreshToken, tokenId);
+
+      const userData = await userService.rotateRefreshToken(refreshToken, tokenId);
 
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
 

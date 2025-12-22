@@ -1,19 +1,15 @@
-const sequelize = require("../bd");
-const { DataTypes } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  const Token = sequelize.define("token", {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    refreshToken: { type: DataTypes.STRING },
+    expiryDate: { type: DataTypes.DATE },
+  });
 
-const Token = sequelize.define("token", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  refreshToken: { type: DataTypes.STRING },
-  expiryDate: { type: DataTypes.DATE },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "users",
-      key: "id",
-    },
-    onDelete: "CASCADE",
-  },
-});
+  Token.associate = function (models) {
+    Token.belongsTo(models.User, {
+      foreignKey: "userId",
+    });
+  };
 
-module.exports = Token;
+  return Token;
+};
