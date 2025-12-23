@@ -21,6 +21,7 @@ class UserService {
 
     return { user: userDto, ...generatedJWT, tokenId };
   }
+
   async login(login, password) {
     const user = await User.findOne({ where: { login } });
     if (!user) {
@@ -46,11 +47,12 @@ class UserService {
 
     return { user: userDto, ...tokens, tokenId };
   }
+
   async logout(id, refreshToken) {
     const token = await tokenService.removeToken(id, refreshToken);
     return token;
   }
-  async rotateRefreshToken(refreshToken, tokenId) {
+  async refreshToken(refreshToken, tokenId) {
     const payload = tokenService.validateRefreshToken(refreshToken);
     if (!payload) {
       throw ApiError.UnauthorizedError("Пользователь не авторизованный");
@@ -67,13 +69,12 @@ class UserService {
       raw: true,
       nest: true,
     });
-
     if (!dataFromDb) {
       throw ApiError.UnauthorizedError("Пользователь не авторизованный");
     }
-    console.log(dataFromDb);
-    const userDto = new UserDto(dataFromDb.User);
-    console.log(userDto);
+
+    const userDto = new UserDto(dataFromDb.user);
+
     const data = await tokenService.updateToken(userDto, dataFromDb.refreshToken, tokenId);
 
     return data;
