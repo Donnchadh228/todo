@@ -45,12 +45,12 @@ describe("Group test", () => {
       return this;
     });
 
-    Group.findByPk.mockResolvedValue({ ...mockGroup });
+    Group.findOne.mockResolvedValue({ ...mockGroup });
 
-    const result = await groupService.changeGroup(1, newName);
+    const result = await groupService.changeGroup(1, newName, 1);
 
-    expect(Group.findByPk).toHaveBeenCalledTimes(1);
-    expect(Group.findByPk).toHaveBeenCalledWith(1);
+    expect(Group.findOne).toHaveBeenCalledTimes(1);
+    expect(Group.findOne).toHaveBeenCalledWith({ where: { id: 1, userId: 1 } });
     expect(result.save).toHaveBeenCalledTimes(1);
 
     expect(result).toEqual({ ...mockGroup, name: newName });

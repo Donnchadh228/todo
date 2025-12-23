@@ -39,13 +39,13 @@ describe("Task test", () => {
       return this;
     });
 
-    Task.findByPk.mockResolvedValue({ ...mockTask });
+    Task.findOne.mockResolvedValue({ ...mockTask });
 
-    groupService.getOneGroup.mockResolvedValue({ userId: 2 });
+    groupService.getOneGroup.mockResolvedValue({ name: "Group", userId: 2 });
     const result = await taskService.changeTask(1, { name: "newTask" }, 2);
 
-    expect(Task.findByPk).toHaveBeenCalledTimes(1);
-    expect(Task.findByPk).toHaveBeenCalledWith(1);
+    expect(Task.findOne).toHaveBeenCalledTimes(1);
+    expect(Task.findOne).toHaveBeenCalledWith({ where: { id: 1, userId: 2 } });
 
     expect(result.update).toHaveBeenCalledTimes(1);
     expect(result).toEqual({ ...mockTask, name: newName, status: 0, groupId: undefined });

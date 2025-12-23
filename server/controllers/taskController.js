@@ -28,7 +28,7 @@ class TaskController {
     }
   }
 
-  async getAll(req, res, next) {
+  async getAllTasks(req, res, next) {
     try {
       let { limit, page } = req.query;
       const { id: userId } = req.user;
@@ -46,18 +46,20 @@ class TaskController {
   async deleteTask(req, res, next) {
     try {
       const { id } = req.params;
-      const task = await taskService.removeTask(id);
+      const userId = req.user.id;
+
+      const task = await taskService.removeTask(id, userId);
       res.json(task);
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
-  async getOne(req, res, next) {
+  async getOneTask(req, res, next) {
     try {
       const { id } = req.params;
-
-      const task = await taskService.getOne(id);
+      const userId = req.user.id;
+      const task = await taskService.getOneTask(id, userId);
 
       res.json(task);
     } catch (error) {

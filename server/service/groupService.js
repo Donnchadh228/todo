@@ -4,30 +4,39 @@ const { Group } = require("../models/indexModel.js");
 class GroupService {
   async createGroup(name, userId) {
     const group = await Group.create({ name, userId });
+
     return group;
   }
-  async changeGroup(id, name) {
-    const group = await Group.findByPk(id);
 
+  async changeGroup(id, name, userId) {
+    const group = await Group.findOne({ where: { id, userId } });
+    if (!group) {
+      throw ApiError.BadRequest("Такой группы нет или у вас нет к ней прав");
+    }
     group.name = name;
     await group.save();
 
     return group;
   }
-  async removeGroup(id) {
-    const group = await Group.destroy({ where: { id } });
+
+  async removeGroup(id, userId) {
+    const group = await Group.destroy({ where: { id, userId } });
+
     return group;
   }
+
   async getAllGroup(limit, offset, userId) {
     const groups = await Group.findAndCountAll({ where: { userId }, limit, offset });
 
     return groups;
   }
-  async getOneGroup(id) {
-    const group = await Group.findByPk(id);
+
+  async getOneGroup(id, userId) {
+    const group = await Group.findOne({ where: { id, userId } });
     if (!group) {
-      throw ApiError.BadRequest("Такой группы не существует");
+      throw ApiError.BadRequest("Такой группы не существует или у вас нет доступа к ней");
     }
+
     return group;
   }
 }
