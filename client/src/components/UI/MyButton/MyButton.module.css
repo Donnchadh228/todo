@@ -1,0 +1,16 @@
+.MyButton {
+  background-color: var(--main-bg-button);
+  color: var(--main-color);
+
+  border: 2px solid var(--main-color-border);
+  padding: 10px 20px;
+  cursor: pointer;
+  /* border-radius: var(--main-border-radius); */
+  transition: 0.5s all;
+  font-size: var(--main-font-size);
+  box-shadow: 0px 5px 5px -4px rgba(0, 0, 0, 0.5);
+}
+.MyButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.5);
+}

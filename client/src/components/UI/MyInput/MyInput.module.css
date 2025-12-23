@@ -1,0 +1,26 @@
+.MyInput {
+  font-size: var(--main-font-size);
+  padding: 5px;
+  background-color: aliceblue;
+  border: none;
+  outline: none;
+  border-radius: var(--main-border-radius);
+
+  display: inline-block;
+  border: 2px solid var(--main-color);
+}
+.MyInput:focus {
+  animation: identifier 2s ease-in-out infinite;
+}
+
+@keyframes identifier {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

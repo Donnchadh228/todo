@@ -1,0 +1,21 @@
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: calc(var(--main-font-size) + 50px);
+  color: #ff4757;
+  margin-bottom: 18px;
+}
+
+.message {
+  font-size: calc(var(--main-font-size) + 5px);
+  color: white;
+  margin-bottom: 20px;
+}
