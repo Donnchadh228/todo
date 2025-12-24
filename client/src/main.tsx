@@ -1,16 +1,17 @@
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 
-import { BrowserRouter } from "react-router-dom";
-
-import NavBar from "./components/UI/NavBar/NavBar.tsx";
-import AppRouter from "./components/AppRouter.tsx";
+import { Provider } from "react-redux";
+import { store } from "./store/index.ts";
+import App from "./App.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <BrowserRouter>
-    <NavBar />
-    <AppRouter />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   // </StrictMode>
 );

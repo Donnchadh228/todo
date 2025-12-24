@@ -2,9 +2,11 @@ import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "../router/PrivateRoute.tsx";
 import { privateRoutes, publicRoutes } from "../router/index.ts";
 import ErrorPages from "../pages/ErrorPages/ErrorPages.tsx";
+import { useTypedSelector } from "../hooks/useTypedSelector.ts";
 
 const AppRouter = () => {
-  const isAuth = true;
+  const { user } = useTypedSelector(state => state.user);
+  const isAuth = user ? true : false;
   return (
     <div>
       <Routes>

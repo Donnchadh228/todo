@@ -1,0 +1,19 @@
+.Group {
+  background-color: var(--form-bg);
+  padding: 15px 10px;
+
+  margin: auto;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.title {
+  font-size: calc(var(--main-font-size) + 5px);
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.span {
+  border-bottom: 2px solid var(--main-color);
+}

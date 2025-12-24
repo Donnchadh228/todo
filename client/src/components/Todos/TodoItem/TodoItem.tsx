@@ -1,10 +1,10 @@
-import type { todoItemType } from "../../../types/todo.ts";
+import type { TodoType } from "../../../types/todo.ts";
 import MyCheckBox from "../../UI/MyCheckBox/MyCheckBox.tsx";
 
 import cl from "./todoItem.module.css";
 
 interface TodoItemProps {
-  todo: todoItemType;
+  todo: TodoType;
 }
 
 const TodoItem = ({ todo }: TodoItemProps) => {

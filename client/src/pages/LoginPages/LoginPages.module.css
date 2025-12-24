@@ -1,0 +1,11 @@
+.register {
+  color: white;
+  text-align: center;
+}
+.register a {
+  transition: 0.5s all;
+  color: aqua;
+}
+.register a:hover {
+  color: rgb(197, 255, 255);
+}
