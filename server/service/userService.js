@@ -55,7 +55,7 @@ class UserService {
   async refreshToken(refreshToken, tokenId) {
     const payload = tokenService.validateRefreshToken(refreshToken);
     if (!payload) {
-      throw ApiError.UnauthorizedError("Пользователь не авторизованный");
+      throw ApiError.Unauthorized("Пользователь не авторизованный");
     }
 
     const dataFromDb = await Token.findOne({
@@ -70,7 +70,7 @@ class UserService {
       nest: true,
     });
     if (!dataFromDb) {
-      throw ApiError.UnauthorizedError("Пользователь не авторизованный");
+      throw ApiError.Unauthorized("Пользователь не авторизованный");
     }
 
     const userDto = new UserDto(dataFromDb.user);
@@ -78,6 +78,11 @@ class UserService {
     const data = await tokenService.updateToken(userDto, dataFromDb.refreshToken, tokenId);
 
     return data;
+  }
+
+  getUserData(user, tokenId) {
+    const responseData = { user: { ...user }, tokenId };
+    return responseData;
   }
 }
 
