@@ -1,0 +1,57 @@
+/* MyCheckBox.module.css */
+.MyCheckBox {
+  /* Базовые стили */
+  width: 20px;
+  height: 20px;
+  border: 2px solid #3498db;
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: white;
+  position: relative;
+}
+
+/* Состояние checked */
+.MyCheckBox:checked {
+  background-color: #3498db;
+  border-color: #2980b9;
+}
+
+/* Галочка при checked */
+.MyCheckBox:checked::before {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Состояние hover */
+.MyCheckBox:hover {
+  border-color: #2980b9;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Состояние focus */
+.MyCheckBox:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+/* Состояние disabled */
+.MyCheckBox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #bdc3c7;
+}
+
+.MyCheckBox:disabled:checked {
+  background-color: #bdc3c7;
+  border-color: #95a5a6;
+}

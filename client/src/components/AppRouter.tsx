@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "../router/PrivateRoute.tsx";
 import { privateRoutes, publicRoutes } from "../router/index.ts";
-import ErrorPages from "../pages/ErrorPages.tsx";
+import ErrorPages from "../pages/ErrorPages/ErrorPages.tsx";
 
 const AppRouter = () => {
   const isAuth = true;
