@@ -8,6 +8,9 @@ const NavBar = () => {
           <Link className={`${cl.link} customHover`} to="/home">
             HOME
           </Link>
+          <Link className={`${cl.link} customHover`} to="/">
+            TODOS
+          </Link>
         </div>
         <div className={cl.right}>
           <Link className={`${cl.link} customHover`} to="/auth">
