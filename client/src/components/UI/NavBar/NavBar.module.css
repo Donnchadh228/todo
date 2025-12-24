@@ -19,6 +19,7 @@
 }
 
 .link {
+  cursor: pointer;
   color: var(--main-color);
   font-weight: bolder;
   display: inline-block;
@@ -31,4 +32,7 @@
 
 .active {
   border-bottom: 2px solid black;
+}
+.login {
+  font-size: calc(var(--main-font-size));
 }

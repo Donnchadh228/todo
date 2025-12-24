@@ -1,11 +1,13 @@
+import type { CSSProperties } from "react";
 import cl from "./MyLoader.module.css";
 interface MyLoaderProps {
   visible?: boolean;
+  style?: CSSProperties;
 }
-const MyLoader = ({ visible = true }: MyLoaderProps) => {
+const MyLoader = ({ style = {}, visible = true }: MyLoaderProps) => {
   return (
     <div className={`${cl.loaderContainer} ${visible ? "" : cl.hidden}`}>
-      <div className={cl.loader}></div>
+      <div style={style} className={cl.loader}></div>
     </div>
   );
 };

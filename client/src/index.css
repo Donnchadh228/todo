@@ -13,6 +13,8 @@
   --main-color-border: rgb(0, 199, 199);
   --main-border-radius: 2px;
   --main-font-size: 18px;
+
+  --form-bg: #292e31;
 }
 
 body {
@@ -29,4 +31,16 @@ body {
 .customHover:hover {
   background-color: rgb(80, 73, 73);
   color: rgb(0, 255, 255);
+}
+.error {
+  color: red;
+  text-align: center;
+  margin: auto;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #bdbdbd;
 }
