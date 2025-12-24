@@ -31,7 +31,7 @@ class TaskController {
   async getAllTasks(req, res, next) {
     try {
       let { limit, page } = req.query;
-      const { id: userId } = req.user;
+      const userId = req.user.id;
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 9;
       let offset = page * limit - limit;
