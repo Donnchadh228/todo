@@ -1,3 +1,6 @@
+const UserDto = require("../dtos/userDto.js");
+const tokenService = require("../service/tokenService.js");
+const { validateAccessToken } = require("../service/tokenService.js");
 const userService = require("../service/userService.js");
 
 class UserController {
@@ -20,7 +23,9 @@ class UserController {
       const user = await userService.login(login, password);
 
       res.cookie("refreshToken", user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
       delete user.refreshToken;
+
       res.json(user);
     } catch (error) {
       console.log(error);
@@ -29,7 +34,8 @@ class UserController {
   }
   async logout(req, res, next) {
     try {
-      const { tokenId } = req.body;
+      const { tokenId } = req.params;
+
       const { refreshToken } = req.cookies;
       const token = await userService.logout(tokenId, refreshToken);
 
@@ -49,6 +55,21 @@ class UserController {
 
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
       delete userData.refreshToken;
+      res.json(userData);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  async check(req, res, next) {
+    try {
+      const user = { ...new UserDto(req.user) };
+
+      const tokenId = req.body.tokenId;
+
+      const userData = userService.getUserData(user, tokenId);
+
       res.json(userData);
     } catch (error) {
       console.log(error);
