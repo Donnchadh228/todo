@@ -28,7 +28,9 @@ class TaskService {
   }
 
   async getAllTasks(limit, offset, userId) {
-    const tasks = await Task.findAndCountAll({ where: { userId }, limit, offset });
+    const tasks = await Task.findAndCountAll({ where: { userId }, limit, offset, order: [["id", "DESC"]] });
+    tasks.limit = limit;
+
     return tasks;
   }
 
