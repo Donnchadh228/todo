@@ -66,8 +66,7 @@ class UserController {
     try {
       const user = { ...new UserDto(req.user) };
 
-      const tokenId = req.body.tokenId;
-
+      const tokenId = req.query.tokenId;
       const userData = userService.getUserData(user, tokenId);
 
       res.json(userData);
