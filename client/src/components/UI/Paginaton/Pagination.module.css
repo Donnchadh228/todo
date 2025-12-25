@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.page {
+  padding: 5px 10px;
+  border: 2px solid var(--main-color-border);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: calc(var(--main-font-size));
+  transition: 0.5s all;
+}
+.page:hover {
+  background-color: var(--main-navBar-color);
+  color: white;
+}
+.currentPage {
+  background-color: var(--main-navBar-color);
+  color: white;
+}

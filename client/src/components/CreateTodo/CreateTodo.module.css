@@ -1,0 +1,16 @@
+.CreateTodo {
+  width: 500px;
+  background-color: #5c5b5b;
+  padding: 10px 20px;
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  z-index: 3;
+}
+
+.wrapper {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}

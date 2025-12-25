@@ -15,7 +15,8 @@ export const authReducer = (state = initialState, action: AuthAction): AuthState
     case AuthActionTypes.FETCH_AUTH_SUCCESS:
       return { isLoading: false, isAuthenticated: true, isAuthLoading: false, error: null, user: action.payload };
     case AuthActionTypes.FETCH_AUTH_ERROR:
-      return { ...state, isLoading: false, error: action.payload ?? "ERROR" };
+      return { ...state, isLoading: false, isAuthenticated: false, error: action.payload ?? "ERROR" };
+
     case AuthActionTypes.FETCH_AUTH_LOGOUT:
       return { ...state, isLoading: false, isAuthenticated: false, user: null };
 
@@ -28,7 +29,7 @@ export const authReducer = (state = initialState, action: AuthAction): AuthState
     case AuthActionTypes.FETCH_AUTH_CHECK_SUCCESS:
       return { ...state, isAuthenticated: true, isAuthLoading: false, user: action.payload };
     case AuthActionTypes.FETCH_AUTH_CHECK_ERROR:
-      return { ...state, isAuthenticated: false, isAuthLoading: false };
+      return { ...state, isAuthenticated: false, isAuthLoading: false, user: null };
 
     default:
       return state;

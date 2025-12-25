@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import AppRouter from "./components/AppRouter.tsx";
 import NavBar from "./components/UI/NavBar/NavBar.tsx";
-import { checkAuth } from "./store/action-creators/auth/checkAuth.ts";
-
 import { useTypedSelector } from "./hooks/useTypedSelector.ts";
-import { useAppDispatch } from "./store/index.ts";
 import MyLoader from "./components/UI/MyLoader/MyLoader.tsx";
+import { useAuth } from "./hooks/useAuth.ts";
 
 function App() {
-  const dispatch = useAppDispatch();
   const { isAuthLoading } = useTypedSelector(state => state.user);
+  const { handleSessionExpired } = useAuth();
 
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(checkAuth());
-    }, 0);
-  }, []);
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+    return () => {
+      window.removeEventListener("auth:session-expired", handleSessionExpired);
+    };
+  }, [handleSessionExpired]);
+
   if (isAuthLoading) {
     return (
       <div className="flex-center">

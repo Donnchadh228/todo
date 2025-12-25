@@ -1,18 +1,18 @@
-import type { TodoType } from "../../../types/todo.ts";
+import type { Todo } from "../../../types/todo.ts";
 import MyCheckBox from "../../UI/MyCheckBox/MyCheckBox.tsx";
 
 import cl from "./todoItem.module.css";
 
 interface TodoItemProps {
-  todo: TodoType;
+  todo: Todo;
 }
 
 const TodoItem = ({ todo }: TodoItemProps) => {
+  const isStatus = todo.status === "1";
   return (
     <div className={cl.todo}>
       <div className={cl.title}>{todo.name}</div>
-      <div className={`${cl.status} ${todo.status ? cl.active : ""}`}>{}</div>
-      <MyCheckBox checked={todo.status ? true : false} />
+      <MyCheckBox checked={isStatus ? true : false} />
     </div>
   );
 };
