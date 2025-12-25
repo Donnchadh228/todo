@@ -1,5 +1,5 @@
 import type { Dispatch } from "redux";
-import { AuthActionTypes, type AuthAction } from "../../../types/auth.ts";
+import { AuthActionTypes, type AuthAction, type AuthResponse } from "../../../types/auth.ts";
 import { $host } from "../../../http/index.ts";
 import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
 
@@ -8,10 +8,14 @@ export const signIn = (login: string, password: string) => {
     try {
       dispatch({ type: AuthActionTypes.FETCH_AUTH });
 
-      const response = await $host.post("user/registration", { login, password }, { withCredentials: true });
+      const response = await $host.post<AuthResponse>(
+        "user/registration",
+        { login, password },
+        { withCredentials: true },
+      );
 
       localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("tokenId", response.data.tokenId);
+      localStorage.setItem("tokenId", response.data.tokenId.toString());
 
       dispatch({ type: AuthActionTypes.FETCH_AUTH_SUCCESS, payload: response.data.user });
     } catch (error: unknown) {

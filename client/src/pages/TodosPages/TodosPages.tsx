@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
 import TodosList from "../../components/Todos/TodosList/TodosList.tsx";
-import Group from "../../components/Group/Group.tsx";
-import axios from "axios";
-import type { TodoResponse, TodoType } from "../../types/todo.ts";
-import { $authHost } from "../../http/index.ts";
+import { useAppDispatch } from "../../store/index.ts";
+import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
+import { fetchTodos } from "../../store/action-creators/todo/fetchTodos.ts";
+import MyLoader from "../../components/UI/MyLoader/MyLoader.tsx";
+import { Pagination } from "../../components/UI/Paginaton/Pagination.tsx";
+
+import CreateTodo from "../../components/CreateTodo/createTodo.tsx";
 
 const TodosPages = () => {
-  const [todos, setTodos] = useState<TodoType[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const dispatch = useAppDispatch();
+  const { fetchError, isLoading, rows, totalPages } = useTypedSelector(state => state.todos);
 
-  async function fetchTodo() {
-    try {
-      const response = await $authHost.get<TodoResponse>("http://localhost:5000/api/task");
-
-      setTodos(response.data.rows);
-    } catch (error) {
-      console.log(error);
-    }
-  }
   useEffect(() => {
-    fetchTodo();
-  }, []);
+    dispatch(fetchTodos(page));
+  }, [page, dispatch]);
+
   return (
     <div className="container">
-      <Group title="GROUPtitle">
-        <TodosList todos={todos} />
-      </Group>
-      {/* <Group>
-        <TodosList todos={todos} />
-      </Group> */}
+      <CreateTodo onSuccess={() => setPage(1)} />
+
+      {fetchError && <div className="error">{fetchError}</div>}
+
+      {/* <Group title="GROUPtitle"> */}
+      {isLoading && <MyLoader />}
+      <TodosList style={{ marginBottom: 40, maxWidth: 500 }} todos={rows} />
+      {/* </Group> */}
+
+      <Pagination page={page} totalPages={totalPages} changePage={setPage}></Pagination>
     </div>
   );
 };

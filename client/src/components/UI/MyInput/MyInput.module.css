@@ -5,7 +5,7 @@
   border: none;
   outline: none;
   border-radius: var(--main-border-radius);
-
+  width: 100%;
   display: inline-block;
   border: 2px solid var(--main-color);
 }

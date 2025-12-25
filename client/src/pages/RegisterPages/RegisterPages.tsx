@@ -2,7 +2,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import MyInput from "../../components/UI/MyInput/MyInput.tsx";
 import MyForm from "../../components/UI/MyForm/MyForm.tsx";
 import MyLoader from "../../components/UI/MyLoader/MyLoader.tsx";
-import { useInput } from "../../hooks/useInput.tsx";
+import { useInput } from "../../hooks/useInput.ts";
 import MyButton from "../../components/UI/MyButton/MyButton.tsx";
 import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
 import { useNavigate } from "react-router-dom";
@@ -11,9 +11,9 @@ import { signIn } from "../../store/action-creators/auth/signIn.ts";
 
 const RegisterPages = () => {
   const { user, error, isLoading } = useTypedSelector(state => state.user);
-  const [login, setLogin] = useInput<string>();
-  const [password, setPassword] = useInput<string>();
-  const [passwordRepeat, setPasswordRepeat] = useInput<string>();
+  const { value: login, onChange: setLogin } = useInput<string>();
+  const { value: password, onChange: setPassword } = useInput<string>();
+  const { value: passwordRepeat, onChange: setPasswordRepeat } = useInput<string>();
   const [errorValidation, setErrorValidation] = useState<string>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const RegisterPages = () => {
     }
   }, [navigate, user]);
 
-  const buttonHandler = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleRegistrationSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (password !== passwordRepeat) {
       setErrorValidation("Пароли не совпадают");
@@ -32,6 +32,7 @@ const RegisterPages = () => {
     setErrorValidation("");
     dispatch(signIn(login, password));
   };
+
   return (
     <div>
       <div className="container">
@@ -41,7 +42,7 @@ const RegisterPages = () => {
           <MyInput value={passwordRepeat} onChange={setPasswordRepeat} type="password" placeholder="Повторите пароль" />
           {<MyLoader visible={isLoading} />}
           <div className="error">{errorValidation || error}</div>
-          <MyButton onClick={buttonHandler}>Регистрация</MyButton>
+          <MyButton onClick={handleRegistrationSubmit}>Регистрация</MyButton>
         </MyForm>
       </div>
     </div>

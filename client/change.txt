@@ -1,0 +1,4 @@
+Добавлена проверка accessToken при первой загрузке. 
+Так же interceptor на 401 запрос, для обновления refreshToken и accessToken + слушать auth:session-expired для logout при отсутствии refreshToken в бд
+
+Создана пагинация по задачам, а так же возможность их добавления 

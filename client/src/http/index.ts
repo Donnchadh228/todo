@@ -1,11 +1,16 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
+import { API_URL } from "../utils/const.ts";
+
+import { handleSessionExpired, refreshToken } from "../store/action-creators/auth/refreshToken.ts";
 
 const $host = axios.create({
-  baseURL: "http://localhost:5000/api/",
+  withCredentials: true,
+  baseURL: API_URL,
 });
 
 const $authHost = axios.create({
-  baseURL: "http://localhost:5000/api/",
+  withCredentials: true,
+  baseURL: API_URL,
 });
 
 const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
@@ -14,6 +19,28 @@ const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosReque
   }
   return config;
 };
+
+$authHost.interceptors.response.use(
+  config => {
+    return config;
+  },
+
+  async error => {
+    const originalRequest = error.config;
+
+    if (error.response.status == 401 && error.config && !originalRequest._retry) {
+      originalRequest._isRetry = true;
+      try {
+        await refreshToken();
+        return $authHost.request(originalRequest);
+      } catch (error) {
+        handleSessionExpired();
+        return Promise.reject(error);
+      }
+    }
+    throw error;
+  },
+);
 
 $authHost.interceptors.request.use(authInterceptor);
 export { $host, $authHost };
