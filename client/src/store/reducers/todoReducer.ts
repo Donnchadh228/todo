@@ -1,21 +1,26 @@
-import { TodoActionTypes, type todoAction, type TodoState } from "../../types/todo.ts";
+import {
+  TodosCollectionActionTypes,
+  type todosAction,
+  type TodosCollectionState,
+} from "../../types/todosCollection.ts";
 
-const initialState: TodoState = {
+const initialState: TodosCollectionState = {
   count: 0,
   rows: [],
   currentPage: 1,
   fetchError: null,
-  createError: null,
+
   limit: 9,
   isLoading: true,
   totalPages: 0,
 };
 
-export const todoReducer = (state = initialState, action: todoAction): TodoState => {
+export const todoReducer = (state = initialState, action: todosAction): TodosCollectionState => {
   switch (action.type) {
-    case TodoActionTypes.FETCH_TODO:
-      return { ...state, isLoading: true, fetchError: null, rows: [], count: 0, currentPage: 0 };
-    case TodoActionTypes.FETCH_TODO_SUCCESS:
+    case TodosCollectionActionTypes.FETCH_TODO:
+      return { ...state, isLoading: true, fetchError: null, rows: [], count: 0, currentPage: 1 };
+
+    case TodosCollectionActionTypes.FETCH_TODO_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -24,11 +29,12 @@ export const todoReducer = (state = initialState, action: todoAction): TodoState
         limit: action.payload.limit,
         totalPages: Math.ceil(action.payload.count / action.payload.limit),
         currentPage: action.payload.currentPage,
+        fetchError: "",
       };
-    case TodoActionTypes.FETCH_TODO_ERROR:
+    case TodosCollectionActionTypes.FETCH_TODO_ERROR:
       return {
         ...state,
-        fetchError: action.payload ?? "ERROR",
+        fetchError: action.payload ?? "Ошибка при получении",
         isLoading: false,
         rows: [],
         count: 0,
@@ -37,33 +43,31 @@ export const todoReducer = (state = initialState, action: todoAction): TodoState
         totalPages: 0,
       };
 
-    case TodoActionTypes.CREATE_TODO:
+    case TodosCollectionActionTypes.REMOVE_TODO_REMOVE:
       return {
         ...state,
-        isLoading: true,
-        createError: null,
+        rows: state.rows.filter(todo => {
+          return todo.id !== action.payload.todo.id;
+        }),
       };
 
-    case TodoActionTypes.CREATE_TODO_SUCCESS: {
-      const newRows = [action.payload, ...state.rows];
-      const limitedRows = newRows.slice(0, state.limit);
-
+    case TodosCollectionActionTypes.UPDATE_TODO_START:
       return {
         ...state,
-        isLoading: false,
-        rows: limitedRows,
-        count: state.count + 1,
-        currentPage: 1,
-        totalPages: Math.ceil((state.count + 1) / state.limit),
+        rows: state.rows.map(todo => {
+          return todo.id === action.payload.newTodo.id ? action.payload.newTodo : todo;
+        }),
+      };
+
+    case TodosCollectionActionTypes.UPDATE_TODO_ROLLBACK: {
+      return {
+        ...state,
+        rows: state.rows.map(todo => {
+          return todo.id === action.payload.oldTodo.id ? action.payload.oldTodo : todo;
+        }),
       };
     }
 
-    case TodoActionTypes.CREATE_TODO_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        createError: action.payload ?? "ERROR",
-      };
     default:
       return state;
   }

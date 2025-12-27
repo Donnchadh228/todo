@@ -1,10 +1,38 @@
 .todo {
+  --right-space: 5px;
   display: flex;
   justify-content: space-between;
   background-color: rgb(230, 229, 229);
-  /* max-width: 250px; */
-  padding: 5px 10px;
+
+  padding: 5px calc(var(--right-space) + var(--main-font-size) + 10px) 5px 10px;
   border-bottom: 2px solid var(--main-color);
   font-size: var(--main-font-size);
   margin-bottom: 5px;
+  position: relative;
+}
+.wrapperSettings {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.remove {
+  position: absolute;
+  top: 0px;
+  right: var(--right-space);
+  cursor: pointer;
+  color: red;
+  font-size: var(--main-font-size);
+}
+.edit {
+  padding: 0;
+  background: none;
+}
+.editing {
+  display: flex;
+  gap: 10px;
+  justify-content: space-around;
+}
+.editing button {
+  padding: 0;
+  width: 30px;
 }

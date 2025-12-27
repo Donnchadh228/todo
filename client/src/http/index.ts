@@ -20,6 +20,8 @@ const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosReque
   return config;
 };
 
+$authHost.interceptors.request.use(authInterceptor);
+
 $authHost.interceptors.response.use(
   config => {
     return config;
@@ -28,7 +30,7 @@ $authHost.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
-    if (error.response.status == 401 && error.config && !originalRequest._retry) {
+    if (error.response.status === 401 && error.config && !originalRequest._isRetry) {
       originalRequest._isRetry = true;
       try {
         await refreshToken();
@@ -42,5 +44,4 @@ $authHost.interceptors.response.use(
   },
 );
 
-$authHost.interceptors.request.use(authInterceptor);
 export { $host, $authHost };
