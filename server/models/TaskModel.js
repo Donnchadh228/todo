@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Task = sequelize.define("task", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
-    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 0 },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   });
 
   Task.associate = function (models) {

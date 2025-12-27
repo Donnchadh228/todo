@@ -20,7 +20,9 @@ class TaskService {
     }
 
     const task = await Task.findOne({ where: { id: taskId, userId } });
-
+    if (!task) {
+      throw ApiError.BadRequest("Данная задача отсутствует, невозможно провести изменения");
+    }
     const newTask = new TaskDto(updates);
     await task.update({ ...newTask });
 
