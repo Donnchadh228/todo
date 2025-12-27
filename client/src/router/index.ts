@@ -1,6 +1,7 @@
-import LoginPages from "../pages/LoginPages/LoginPages.tsx";
-import RegisterPages from "../pages/RegisterPages/RegisterPages.tsx";
-import TodosPages from "../pages/TodosPages/TodosPages.tsx";
+import GroupPage from "../pages/GroupsPage/GroupPage.tsx";
+import LoginPage from "../pages/LoginPage/LoginPage.tsx";
+import RegisterPage from "../pages/RegisterPage/RegisterPage.tsx";
+import TodosPage from "../pages/TodosPage/TodosPage.tsx";
 import { publicRoutesConfig, privateRoutesConfig } from "../utils/const";
 
 interface RouteConfig {
@@ -11,9 +12,12 @@ interface RouteConfig {
 export const publicRoutes: RouteConfig[] = [
   {
     path: publicRoutesConfig.LOGIN,
-    component: LoginPages,
+    component: LoginPage,
   },
-  { path: publicRoutesConfig.REGISTER, component: RegisterPages },
+  { path: publicRoutesConfig.REGISTER, component: RegisterPage },
 ];
 
-export const privateRoutes: RouteConfig[] = [{ path: privateRoutesConfig.TODOS, component: TodosPages }];
+export const privateRoutes: RouteConfig[] = [
+  { path: privateRoutesConfig.TODOS, component: TodosPage },
+  { path: privateRoutesConfig.GROUPS, component: GroupPage },
+];

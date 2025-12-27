@@ -1,7 +1,7 @@
 import type { Dispatch } from "redux";
 import { TodoItemActionTypes, type Todo, type todoItemAction } from "../../../types/todoItem.ts";
 import { $authHost } from "../../../http/index.ts";
-import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
+import { getErrorMessage } from "../../../utils/getErrorMessage.ts";
 
 export const createTodo = (name: string) => {
   return async (dispatch: Dispatch<todoItemAction>) => {

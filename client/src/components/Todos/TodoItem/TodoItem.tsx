@@ -2,11 +2,11 @@ import { memo, useState, type ChangeEvent, type FocusEvent, type HTMLAttributes 
 import type { Todo } from "../../../types/todoItem.ts";
 import MyCheckBox from "../../UI/MyCheckBox/MyCheckBox.tsx";
 
-import cl from "./todoItem.module.css";
 import MyButton from "../../UI/MyButton/MyButton.tsx";
 import MyInput from "../../UI/MyInput/MyInput.tsx";
 import { useInput } from "../../../hooks/useInput.ts";
 
+import cl from "./todoItem.module.css";
 interface TodoItemProps extends HTMLAttributes<HTMLDivElement> {
   todo: Todo;
   onUpdateTodo: (updatedTodo: Todo, oldTodo: Todo) => void;
@@ -15,7 +15,7 @@ interface TodoItemProps extends HTMLAttributes<HTMLDivElement> {
 
 const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const { value: editedText, onChange: onSetEditedText, reset: resetText } = useInput<string>(todo.name);
+  const { value: editedText, onChange: onSetEditedText, setValue: setEditedText } = useInput<string>(todo.name);
 
   const handleSave = () => {
     onUpdateTodo({ ...todo, name: editedText }, todo);
@@ -23,7 +23,7 @@ const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => 
   };
 
   const handleCancel = () => {
-    resetText();
+    setEditedText(todo.name);
     setIsEditing(false);
   };
 

@@ -1,7 +1,7 @@
 import type { Dispatch } from "redux";
 import { $authHost } from "../../../http/index.ts";
 import { AuthActionTypes, type AuthAction } from "../../../types/auth.ts";
-import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
+import { getErrorMessage } from "../../../utils/getErrorMessage.ts";
 
 export const logout = () => {
   return async (dispatch: Dispatch<AuthAction>) => {

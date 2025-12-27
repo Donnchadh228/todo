@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "../router/PrivateRoute.tsx";
 import { privateRoutes, publicRoutes } from "../router/index.ts";
-import ErrorPages from "../pages/ErrorPages/ErrorPages.tsx";
+import ErrorPage from "../pages/ErrorPage/ErrorPage.tsx";
 import { useTypedSelector } from "../hooks/useTypedSelector.ts";
 
 const AppRouter = () => {
@@ -22,7 +22,7 @@ const AppRouter = () => {
           })}
         </Route>
 
-        <Route path="*" element={<ErrorPages />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
   );

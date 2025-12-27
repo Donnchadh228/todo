@@ -8,7 +8,7 @@ import { Pagination } from "../../components/UI/Paginaton/Pagination.tsx";
 
 import CreateTodo from "../../components/Todos/CreateTodo/CreateTodo.tsx";
 
-const TodosPages = () => {
+const TodosPage = () => {
   const [page, setPage] = useState<number>(1);
   const dispatch = useAppDispatch();
   const { fetchError, isLoading, rows, totalPages } = useTypedSelector(state => state.todos);
@@ -31,7 +31,7 @@ const TodosPages = () => {
       {/* <Group title="GROUPtitle"> */}
       {isLoading && <MyLoader />}
 
-      {rows.length <= 0 && !isLoading ? <div className="missing">Задач нет</div> : ""}
+      {rows.length <= 0 && !isLoading && <div className="missing">Задач нет</div>}
 
       <TodosList style={{ marginBottom: 40, maxWidth: 500 }} todos={rows} />
       {/* </Group> */}
@@ -41,4 +41,4 @@ const TodosPages = () => {
   );
 };
 
-export default TodosPages;
+export default TodosPage;
