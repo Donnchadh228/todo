@@ -24,7 +24,7 @@
   font-size: var(--main-font-size);
 }
 .edit {
-  padding: 0;
+  padding: 0px;
   background: none;
 }
 .editing {

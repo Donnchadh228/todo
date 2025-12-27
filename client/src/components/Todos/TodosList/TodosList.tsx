@@ -1,8 +1,6 @@
 import { useCallback, type CSSProperties } from "react";
 import type { Todo } from "../../../types/todoItem.ts";
 import TodoItem from "../TodoItem/TodoItem.tsx";
-import cl from "./TodosList.module.css";
-
 import { useAppDispatch } from "../../../store/index.ts";
 import { removeTodo } from "../../../store/action-creators/todo/removeTodo.ts";
 import { useTypedSelector } from "../../../hooks/useTypedSelector.ts";
@@ -11,6 +9,7 @@ import { useErrorTimeout } from "../../../hooks/useErrorTimeout.ts";
 import { clearError } from "../../../store/action-creators/todo/clearError.ts";
 import MyLoader from "../../UI/MyLoader/MyLoader.tsx";
 
+import cl from "./TodosList.module.css";
 interface TodosListProps {
   todos: Todo[];
   style?: CSSProperties;

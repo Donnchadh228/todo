@@ -17,11 +17,16 @@ const NavBar = () => {
   return (
     <div className={`${cl.wrapper}`}>
       <nav className={`${cl.navBar} container`}>
-        <div className={cl.left}>
-          <Link className={`${cl.link} customHover`} to={privateRoutesConfig.TODOS}>
-            TODOS
-          </Link>
-        </div>
+        {user && (
+          <div className={cl.left}>
+            <Link className={`${cl.link} customHover`} to={privateRoutesConfig.TODOS}>
+              TODOS
+            </Link>
+            <Link className={`${cl.link} customHover`} to={privateRoutesConfig.GROUPS}>
+              GROUPS
+            </Link>
+          </div>
+        )}
         <div className={cl.right}>
           {!user ? (
             <>

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store/index.ts";
 import { signIn } from "../../store/action-creators/auth/signIn.ts";
 
-const RegisterPages = () => {
+const RegisterPage = () => {
   const { user, error, isLoading } = useTypedSelector(state => state.user);
   const { value: login, onChange: setLogin } = useInput<string>();
   const { value: password, onChange: setPassword } = useInput<string>();
@@ -49,4 +49,4 @@ const RegisterPages = () => {
   );
 };
 
-export default RegisterPages;
+export default RegisterPage;

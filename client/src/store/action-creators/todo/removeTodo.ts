@@ -1,6 +1,6 @@
 import type { Dispatch } from "redux";
 import { TodoItemActionTypes, type Todo, type todoItemAction } from "../../../types/todoItem.ts";
-import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
+import { getErrorMessage } from "../../../utils/getErrorMessage.ts";
 import { $authHost } from "../../../http/index.ts";
 import { TodosCollectionActionTypes, type todosAction } from "../../../types/todosCollection.ts";
 

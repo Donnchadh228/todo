@@ -6,12 +6,12 @@ import MyLoader from "../../components/UI/MyLoader/MyLoader.tsx";
 import { useEffect, type MouseEvent } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { publicRoutesConfig } from "../../utils/const.ts";
-import cl from "./LoginPages.module.css";
+import cl from "./LoginPage.module.css";
 import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
 import { login } from "../../store/action-creators/auth/login.ts";
 import { useAppDispatch } from "../../store/index.ts";
 
-const LoginPages = () => {
+const LoginPage = () => {
   const { value: loginValue, onChange: setLoginValue } = useInput<string>();
   const { value: password, onChange: setPassword } = useInput<string>();
   const { user, error, isLoading } = useTypedSelector(state => state.user);
@@ -47,4 +47,4 @@ const LoginPages = () => {
   );
 };
 
-export default LoginPages;
+export default LoginPage;

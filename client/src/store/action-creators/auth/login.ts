@@ -2,7 +2,7 @@ import type { Dispatch } from "redux";
 import { AuthActionTypes, type AuthAction, type AuthResponse } from "../../../types/auth.ts";
 
 import { $host } from "../../../http/index.ts";
-import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
+import { getErrorMessage } from "../../../utils/getErrorMessage.ts";
 
 export const login = (login: string, password: string) => {
   return async (dispatch: Dispatch<AuthAction>) => {
