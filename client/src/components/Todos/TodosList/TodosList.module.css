@@ -3,3 +3,7 @@
   flex-direction: column;
   margin: auto;
 }
+
+.wrapperUpdate {
+  display: flex;
+}

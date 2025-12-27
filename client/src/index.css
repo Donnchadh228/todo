@@ -37,8 +37,9 @@ body {
   text-align: center;
   margin: auto;
   font-size: var(--main-font-size);
-
-  text-shadow: 0px 2px 5px rgb(0, 0, 0);
+  font-weight: 500;
+  letter-spacing: 1px;
+  /* text-shadow: 0px 2px 10px rgb(255, 255, 255); */
 }
 .flex-center {
   display: flex;
@@ -46,4 +47,11 @@ body {
   align-items: center;
   height: 100vh;
   background-color: #bdbdbd;
+}
+
+.missing {
+  font-size: calc(var(--main-font-size) + 20px);
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
 }

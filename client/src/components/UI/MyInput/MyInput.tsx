@@ -1,12 +1,8 @@
-import { type ChangeEvent, type InputHTMLAttributes } from "react";
+import { type InputHTMLAttributes } from "react";
 import cl from "./MyInput.module.css";
-interface MyInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  value?: string;
-}
 
-const MyInput = (props: MyInputProps) => {
-  return <input className={cl.MyInput} type="text" {...props} />;
+const MyInput = (props: InputHTMLAttributes<HTMLInputElement>) => {
+  return <input className={cl.MyInput} {...props} />;
 };
 
 export default MyInput;

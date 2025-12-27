@@ -1,19 +1,22 @@
 import type { Dispatch } from "redux";
-import { TodoActionTypes, type todoAction, type TodoResponse } from "../../../types/todo.ts";
+import { TodosCollectionActionTypes, type todosAction, type TodosResponse } from "../../../types/todosCollection.ts";
 import { $authHost } from "../../../http/index.ts";
 import { getErrorMessage } from "../../../utils/getErrorMessage.tsx";
 
 export const fetchTodos = (page: number = 1) => {
-  return async (dispatch: Dispatch<todoAction>) => {
+  return async (dispatch: Dispatch<todosAction>) => {
     try {
-      dispatch({ type: TodoActionTypes.FETCH_TODO });
+      dispatch({ type: TodosCollectionActionTypes.FETCH_TODO });
 
-      const response = await $authHost.get<TodoResponse>("task/?page=" + page);
+      const response = await $authHost.get<TodosResponse>("task/?page=" + page);
 
-      dispatch({ type: TodoActionTypes.FETCH_TODO_SUCCESS, payload: { ...response.data, currentPage: page } });
+      dispatch({
+        type: TodosCollectionActionTypes.FETCH_TODO_SUCCESS,
+        payload: { ...response.data, currentPage: page },
+      });
     } catch (error) {
       const message = getErrorMessage(error);
-      dispatch({ type: TodoActionTypes.FETCH_TODO_ERROR, payload: message });
+      dispatch({ type: TodosCollectionActionTypes.FETCH_TODO_ERROR, payload: message });
     }
   };
 };
