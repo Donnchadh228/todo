@@ -1,14 +1,14 @@
 import { combineReducers } from "redux";
 import { authReducer } from "./authReducer.ts";
-import { todoReducer } from "./todoReducer.ts";
+import { todosReducer } from "./todosCollectionReducer.ts";
 import { todoItemReducer } from "./todoItemReducer.ts";
-import { groupReducer } from "./groupReducer.ts";
 
+import groupsReducer from "./groupSlice.ts";
 export const rootReducer = combineReducers({
   user: authReducer,
-  todos: todoReducer,
+  todos: todosReducer,
   todo: todoItemReducer,
-  groups: groupReducer,
+  groupsReducer: groupsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

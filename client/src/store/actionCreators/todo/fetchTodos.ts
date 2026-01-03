@@ -9,7 +9,7 @@ export const fetchTodos = (page: number = 1) => {
       dispatch({ type: TodosCollectionActionTypes.FETCH_TODO });
 
       const response = await $authHost.get<TodosResponse>("task/?page=" + page);
-      console.log(response.data);
+
       dispatch({
         type: TodosCollectionActionTypes.FETCH_TODO_SUCCESS,
         payload: { ...response.data, currentPage: page },

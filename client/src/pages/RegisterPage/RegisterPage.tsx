@@ -4,10 +4,10 @@ import MyForm from "../../components/UI/MyForm/MyForm.tsx";
 import MyLoader from "../../components/UI/MyLoader/MyLoader.tsx";
 import { useInput } from "../../hooks/useInput.ts";
 import MyButton from "../../components/UI/MyButton/MyButton.tsx";
-import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../store/index.ts";
-import { signIn } from "../../store/action-creators/auth/signIn.ts";
+
+import { signIn } from "../../store/actionCreators/auth/signIn.ts";
+import { useAppDispatch, useTypedSelector } from "../../hooks/redux.ts";
 
 const RegisterPage = () => {
   const { user, error, isLoading } = useTypedSelector(state => state.user);

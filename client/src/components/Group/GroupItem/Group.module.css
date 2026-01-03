@@ -6,6 +6,7 @@
   margin-bottom: 5px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .title {
   font-size: calc(var(--main-font-size) + 5px);

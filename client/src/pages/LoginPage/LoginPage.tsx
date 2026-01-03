@@ -7,9 +7,8 @@ import { useEffect, type MouseEvent } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { publicRoutesConfig } from "../../utils/const.ts";
 import cl from "./LoginPage.module.css";
-import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
-import { login } from "../../store/action-creators/auth/login.ts";
-import { useAppDispatch } from "../../store/index.ts";
+import { login } from "../../store/actionCreators/auth/login.ts";
+import { useAppDispatch, useTypedSelector } from "../../hooks/redux.ts";
 
 const LoginPage = () => {
   const { value: loginValue, onChange: setLoginValue } = useInput<string>();
@@ -34,7 +33,7 @@ const LoginPage = () => {
     <div className="container">
       <MyForm title="Авторизация" style={{ maxWidth: 400 }}>
         <MyInput value={loginValue} onChange={setLoginValue} placeholder="Введите логин" />
-        <MyInput value={password} onChange={setPassword} placeholder="Введите логин" />
+        <MyInput type="password" value={password} onChange={setPassword} placeholder="Введите логин" />
 
         <MyLoader visible={isLoading} />
         <div className="error">{error}</div>

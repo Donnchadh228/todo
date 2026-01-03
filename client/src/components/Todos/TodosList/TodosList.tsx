@@ -1,15 +1,15 @@
 import { useCallback, type CSSProperties } from "react";
 import type { Todo } from "../../../types/todoItem.ts";
 import TodoItem from "../TodoItem/TodoItem.tsx";
-import { useAppDispatch } from "../../../store/index.ts";
-import { removeTodo } from "../../../store/action-creators/todo/removeTodo.ts";
-import { useTypedSelector } from "../../../hooks/useTypedSelector.ts";
-import { updateTodo } from "../../../store/action-creators/todo/updateTodo.ts";
+
+import { removeTodo } from "../../../store/actionCreators/todo/removeTodo.ts";
+import { updateTodo } from "../../../store/actionCreators/todo/updateTodo.ts";
 import { useErrorTimeout } from "../../../hooks/useErrorTimeout.ts";
-import { clearError } from "../../../store/action-creators/todo/clearError.ts";
+import { clearError } from "../../../store/actionCreators/todo/clearError.ts";
 import MyLoader from "../../UI/MyLoader/MyLoader.tsx";
 
 import cl from "./TodosList.module.css";
+import { useAppDispatch, useTypedSelector } from "../../../hooks/redux.ts";
 interface TodosListProps {
   todos: Todo[];
   style?: CSSProperties;
@@ -20,7 +20,6 @@ const TodosList = ({ todos, style }: TodosListProps) => {
   const dispatch = useAppDispatch();
 
   useErrorTimeout(
-    updateError,
     errorTimestamp,
     () => {
       dispatch(clearError());

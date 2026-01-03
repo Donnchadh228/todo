@@ -55,3 +55,18 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.remove {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  cursor: pointer;
+  color: red;
+  font-size: var(--main-font-size);
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+.remove:hover {
+  background-color: transparent;
+}
