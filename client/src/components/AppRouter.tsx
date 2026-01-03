@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "../router/PrivateRoute.tsx";
 import { privateRoutes, publicRoutes } from "../router/index.ts";
 import ErrorPage from "../pages/ErrorPage/ErrorPage.tsx";
-import { useTypedSelector } from "../hooks/useTypedSelector.ts";
+import { useTypedSelector } from "../hooks/redux.ts";
 
 const AppRouter = () => {
   const { user } = useTypedSelector(state => state.user);

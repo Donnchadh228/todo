@@ -7,6 +7,7 @@ import MyInput from "../../UI/MyInput/MyInput.tsx";
 import { useInput } from "../../../hooks/useInput.ts";
 
 import cl from "./todoItem.module.css";
+import { areTodoItemsEqual } from "../../../utils/memoComparisons.ts";
 interface TodoItemProps extends HTMLAttributes<HTMLDivElement> {
   todo: Todo;
   onUpdateTodo: (updatedTodo: Todo, oldTodo: Todo) => void;
@@ -53,29 +54,19 @@ const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => 
   }
 
   return (
-    <div className={cl.todo} {...props}>
+    <div className={`${cl.todo} ${todo.status && cl.active}`} {...props}>
       <div className={cl.title}>{todo.name}</div>
       <div className={cl.wrapperSettings}>
         <MyButton className={cl.edit} onClick={() => setIsEditing(true)}>
           ✏️
         </MyButton>
-        <span className={cl.remove} onClick={removeTodo}>
+        <button className="remove" onClick={removeTodo}>
           X
-        </span>
+        </button>
         <MyCheckBox checked={todo.status} onChange={changeTodo} />
       </div>
     </div>
   );
 };
 
-export default memo(TodoItem, (prevProps, nextProps) => {
-  if (prevProps.todo.status !== nextProps.todo.status) {
-    return false;
-  }
-
-  if (prevProps.todo.name !== nextProps.todo.name) {
-    return false;
-  }
-
-  return true;
-});
+export default memo(TodoItem, areTodoItemsEqual);

@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import cl from "./NavBar.module.css";
 
 import { privateRoutesConfig, publicRoutesConfig } from "../../../utils/const.ts";
-import { useTypedSelector } from "../../../hooks/useTypedSelector.ts";
 
-import { logout } from "../../../store/action-creators/auth/logout.ts";
-import { useAppDispatch } from "../../../store/index.ts";
+import { logout } from "../../../store/actionCreators/auth/logout.ts";
+import { useAppDispatch, useTypedSelector } from "../../../hooks/redux.ts";
+
 const NavBar = () => {
   const { user } = useTypedSelector(state => state.user);
   const dispatch = useAppDispatch();

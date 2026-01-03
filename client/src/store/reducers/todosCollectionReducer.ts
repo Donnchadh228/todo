@@ -15,7 +15,7 @@ const initialState: TodosCollectionState = {
   totalPages: 0,
 };
 
-export const todoReducer = (state = initialState, action: todosAction): TodosCollectionState => {
+export const todosReducer = (state = initialState, action: todosAction): TodosCollectionState => {
   switch (action.type) {
     case TodosCollectionActionTypes.FETCH_TODO:
       return { ...state, isLoading: true, fetchError: null, rows: [], count: 0, currentPage: 1 };

@@ -1,7 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import { API_URL } from "../utils/const.ts";
 
-import { handleSessionExpired, refreshToken } from "../store/action-creators/auth/refreshToken.ts";
+import { handleSessionExpired, refreshToken } from "../store/actionCreators/auth/refreshToken.ts";
 
 const $host = axios.create({
   withCredentials: true,

@@ -1,19 +1,35 @@
 import { useEffect, useState } from "react";
-import { useTypedSelector } from "../../hooks/useTypedSelector.ts";
-import { fetchGroups } from "../../store/action-creators/group/fetchGroup.ts";
-import Group from "../../components/Group/Group.tsx";
-import { useAppDispatch } from "../../store/index.ts";
-import { Pagination } from "../../components/UI/Paginaton/Pagination.tsx";
+import { Pagination } from "../../components/UI/Pagination/Pagination.tsx";
 import MyLoader from "../../components/UI/MyLoader/MyLoader.tsx";
-import TodoItem from "../../components/Todos/TodoItem/TodoItem.tsx";
+import { useErrorTimeout } from "../../hooks/useErrorTimeout.ts";
+
+import { fetchGroups } from "../../store/actionCreators/reduxToolkit/fetchGroups.ts";
+import { useAppDispatch, useTypedSelector } from "../../hooks/redux.ts";
+
+import GroupCreate from "../../components/Group/GroupCreate/GroupCreate.tsx";
+import GroupList from "../../components/Group/GroupList/GroupList.tsx";
+import { clearGroupErrors } from "../../store/reducers/groupSlice.ts";
+
 const GroupPage = () => {
   const [page, setPage] = useState<number>(1);
-  const { rows, isLoading, fetchError, totalPages } = useTypedSelector(state => state.groups);
+  const { rows, isLoading, fetchError, totalPages, deletedId, deleteError, errorTimestamp } = useTypedSelector(
+    state => state.groupsReducer,
+  );
+
   const dispatch = useAppDispatch();
+
+  useErrorTimeout(
+    errorTimestamp,
+    () => {
+      dispatch(clearGroupErrors());
+    },
+    4000,
+  );
 
   useEffect(() => {
     dispatch(fetchGroups(page));
   }, [page, dispatch]);
+
   if (isLoading) {
     return <MyLoader />;
   }
@@ -24,18 +40,11 @@ const GroupPage = () => {
 
   return (
     <div>
-      <div className="error">{fetchError}</div>
-      {rows.map(group => {
-        return (
-          <Group key={group.id} title={group.name}>
-            {group.tasks.map(todo => {
-              return <TodoItem todo={todo} />;
-            })}
-          </Group>
-        );
-      })}
+      <div className="error">{deleteError}</div>
+      <GroupList rows={rows} loadingGroupIds={deletedId} />
 
       <Pagination page={page} changePage={setPage} totalPages={totalPages} />
+      <GroupCreate />
     </div>
   );
 };

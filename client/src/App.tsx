@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import AppRouter from "./components/AppRouter.tsx";
 import NavBar from "./components/UI/NavBar/NavBar.tsx";
-import { useTypedSelector } from "./hooks/useTypedSelector.ts";
+
 import MyLoader from "./components/UI/MyLoader/MyLoader.tsx";
 import { useAuth } from "./hooks/useAuth.ts";
+import { useTypedSelector } from "./hooks/redux.ts";
 
 function App() {
   const { isAuthLoading } = useTypedSelector(state => state.user);
@@ -26,6 +27,7 @@ function App() {
   return (
     <>
       <NavBar />
+
       <AppRouter />
     </>
   );

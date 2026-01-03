@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "../store/index.ts";
-import { checkAuth } from "../store/action-creators/auth/checkAuth.ts";
-import { logout } from "../store/action-creators/auth/logout.ts";
+
+import { checkAuth } from "../store/actionCreators/auth/checkAuth.ts";
+import { logout } from "../store/actionCreators/auth/logout.ts";
+import { useAppDispatch } from "./redux.ts";
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();

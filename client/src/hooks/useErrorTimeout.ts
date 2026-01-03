@@ -1,28 +1,19 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "../store/index.ts";
 
-type ClearErrorFn = (dispatch: ReturnType<typeof useAppDispatch>) => void;
-export const useErrorTimeout = (
-  error: string | null,
-  errorTimestamp: number | undefined,
-  clearAction: ClearErrorFn,
-  delay: number = 3000,
-) => {
-  const dispatch = useAppDispatch();
-
+export const useErrorTimeout = (errorTimestamp: number | undefined, clearAction: () => void, delay: number = 3000) => {
   useEffect(() => {
-    if (!error || !errorTimestamp) return;
+    if (!errorTimestamp) return;
 
     const timePassed = Date.now() - errorTimestamp;
 
     if (timePassed >= delay) {
-      clearAction(dispatch);
+      clearAction();
       return;
     }
 
     const remaining = delay - timePassed;
-    const timer = setTimeout(() => clearAction(dispatch), remaining);
+    const timer = setTimeout(() => clearAction(), remaining);
 
     return () => clearTimeout(timer);
-  }, [error, errorTimestamp, clearAction, dispatch, delay]);
+  }, [errorTimestamp, clearAction, delay]);
 };

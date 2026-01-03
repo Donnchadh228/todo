@@ -15,14 +15,7 @@
   gap: 10px;
   align-items: center;
 }
-.remove {
-  position: absolute;
-  top: 0px;
-  right: var(--right-space);
-  cursor: pointer;
-  color: red;
-  font-size: var(--main-font-size);
-}
+
 .edit {
   padding: 0px;
   background: none;
@@ -35,4 +28,8 @@
 .editing button {
   padding: 0;
   width: 30px;
+}
+.active {
+  border-color: rgb(43, 223, 43);
+  background-color: rgb(127, 224, 127);
 }
