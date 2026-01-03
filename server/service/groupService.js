@@ -1,5 +1,5 @@
 const ApiError = require("../expectations/apiError.js");
-const { Group } = require("../models/indexModel.js");
+const { Group, User, Task } = require("../models/indexModel.js");
 
 class GroupService {
   async createGroup(name, userId) {
@@ -26,8 +26,14 @@ class GroupService {
   }
 
   async getAllGroup(limit, offset, userId) {
-    const groups = await Group.findAndCountAll({ where: { userId }, limit, offset });
-
+    const groups = await Group.findAndCountAll({
+      include: [{ model: Task }],
+      where: { userId },
+      limit,
+      offset,
+      order: [["id", "DESC"]],
+    });
+    groups.limit = limit;
     return groups;
   }
 
