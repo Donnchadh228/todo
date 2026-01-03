@@ -28,10 +28,11 @@ class GroupController {
       const { id: userId } = req.user;
 
       page = parseInt(page) || 1;
-      limit = parseInt(limit) || 9;
+      limit = parseInt(limit) || 8;
 
       let offset = page * limit - limit;
       const group = await groupService.getAllGroup(limit, offset, userId);
+      group.currentPage = page;
       res.json(group);
     } catch (error) {
       next(error);
