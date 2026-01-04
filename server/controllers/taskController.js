@@ -30,12 +30,16 @@ class TaskController {
 
   async getAllTasks(req, res, next) {
     try {
-      let { limit, page } = req.query;
+      let { sortBy = "createdAt", sortOrder = "desc", limit, page, status } = req.query;
       const userId = req.user.id;
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 9;
+
       let offset = page * limit - limit;
-      const tasks = await taskService.getAllTasks(limit, offset, userId);
+
+      const options = { limit, offset, userId, sortBy, sortOrder, status: status ? parseInt(status) : undefined };
+
+      const tasks = await taskService.getAllTasks(options);
       res.json(tasks);
     } catch (error) {
       console.log(error);

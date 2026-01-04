@@ -29,13 +29,20 @@ class TaskService {
     return task;
   }
 
-  async getAllTasks(limit, offset, userId) {
+  async getAllTasks(options) {
+    const { limit, offset, userId, sortBy, sortOrder, status } = options;
+
+    const whereClause = { userId };
+    if (status !== undefined && (status === 0 || status === 1)) {
+      whereClause.status = status;
+    }
+
     const tasks = await Task.findAndCountAll({
-      where: { userId },
+      where: whereClause,
       limit,
       offset,
       include: [{ model: Group, attributes: ["name"] }],
-      order: [["id", "DESC"]],
+      order: [[sortBy, sortOrder]],
     });
     tasks.limit = limit;
 
