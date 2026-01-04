@@ -1,5 +1,5 @@
-const { Task } = require("../models/indexModel.js");
-const TaskDto = require("../dtos/taskDto");
+const { Task, Group } = require("../models/indexModel.js");
+
 const ApiError = require("../expectations/apiError.js");
 const groupService = require("./groupService.js");
 
@@ -23,14 +23,20 @@ class TaskService {
     if (!task) {
       throw ApiError.BadRequest("Данная задача отсутствует, невозможно провести изменения");
     }
-    const newTask = new TaskDto(updates);
-    await task.update({ ...newTask });
+
+    await task.update({ ...updates });
 
     return task;
   }
 
   async getAllTasks(limit, offset, userId) {
-    const tasks = await Task.findAndCountAll({ where: { userId }, limit, offset, order: [["id", "DESC"]] });
+    const tasks = await Task.findAndCountAll({
+      where: { userId },
+      limit,
+      offset,
+      include: [{ model: Group, attributes: ["name"] }],
+      order: [["id", "DESC"]],
+    });
     tasks.limit = limit;
 
     return tasks;
