@@ -2,10 +2,11 @@ export interface Todo {
   id: number;
   name: string;
   status: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   userId: number;
   groupId: number | null;
+  group: { name: string };
 }
 
 export interface TodoState {

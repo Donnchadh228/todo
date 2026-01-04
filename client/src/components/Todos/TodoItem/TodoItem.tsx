@@ -8,18 +8,20 @@ import { useInput } from "../../../hooks/useInput.ts";
 
 import cl from "./todoItem.module.css";
 import { areTodoItemsEqual } from "../../../utils/memoComparisons.ts";
+
 interface TodoItemProps extends HTMLAttributes<HTMLDivElement> {
   todo: Todo;
-  onUpdateTodo: (updatedTodo: Todo, oldTodo: Todo) => void;
-  onRemove: (todo: Todo) => void;
+  onUpdateTodo?: (updatedTodo: Todo, oldTodo: Todo) => void;
+  onRemove?: (todo: Todo) => void;
+  needNameGroup?: boolean;
 }
 
-const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => {
+const TodoItem = ({ todo, onUpdateTodo, onRemove, needNameGroup, className = "", ...props }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { value: editedText, onChange: onSetEditedText, setValue: setEditedText } = useInput<string>(todo.name);
 
   const handleSave = () => {
-    onUpdateTodo({ ...todo, name: editedText }, todo);
+    onUpdateTodo?.({ ...todo, name: editedText }, todo);
     setIsEditing(false);
   };
 
@@ -30,11 +32,11 @@ const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => 
 
   const changeTodo = (event: ChangeEvent<HTMLInputElement>) => {
     event.stopPropagation();
-    onUpdateTodo({ ...todo, status: event.target.checked }, todo);
+    onUpdateTodo?.({ ...todo, status: event.target.checked }, todo);
   };
 
   const removeTodo = () => {
-    onRemove(todo);
+    onRemove?.(todo);
   };
 
   const handleBlur = (e: FocusEvent) => {
@@ -43,7 +45,7 @@ const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => 
     }
   };
 
-  if (isEditing) {
+  if (isEditing && onUpdateTodo) {
     return (
       <div className={cl.editing} onBlur={handleBlur}>
         <MyInput type="text" value={editedText} onChange={onSetEditedText} autoFocus />
@@ -52,19 +54,32 @@ const TodoItem = ({ todo, onUpdateTodo, onRemove, ...props }: TodoItemProps) => 
       </div>
     );
   }
+  const dragStartHandler = (e: React.DragEvent<HTMLDivElement>, todo: Todo) => {
+    e.dataTransfer.setData("todoId", todo.id.toString());
+    e.dataTransfer.setData("todoName", todo.name);
+  };
 
   return (
-    <div className={`${cl.todo} ${todo.status && cl.active}`} {...props}>
+    <div
+      className={`${cl.todo} ${todo.status && cl.active} ${className}`}
+      {...props}
+      onDragStart={e => dragStartHandler(e, todo)}
+      draggable="true">
       <div className={cl.title}>{todo.name}</div>
       <div className={cl.wrapperSettings}>
-        <MyButton className={cl.edit} onClick={() => setIsEditing(true)}>
-          ✏️
-        </MyButton>
-        <button className="remove" onClick={removeTodo}>
-          X
-        </button>
-        <MyCheckBox checked={todo.status} onChange={changeTodo} />
+        {onUpdateTodo && (
+          <MyButton className={cl.edit} onClick={() => setIsEditing(true)}>
+            ✏️
+          </MyButton>
+        )}
+        {onRemove && (
+          <button className="remove" onClick={removeTodo}>
+            X
+          </button>
+        )}
+        {onUpdateTodo && <MyCheckBox checked={todo.status} onChange={changeTodo} />}
       </div>
+      {needNameGroup && todo.group?.name && <div className={cl.groupText}>{todo.group.name}</div>}
     </div>
   );
 };

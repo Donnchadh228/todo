@@ -21,6 +21,7 @@ body {
   /* background-color: var(--main-bg-color); */
   margin: 0;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin-bottom: 120px;
 }
 .container {
   max-width: 1240px;

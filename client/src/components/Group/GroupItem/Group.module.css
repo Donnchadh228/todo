@@ -2,8 +2,6 @@
   background-color: var(--form-bg);
   padding: 15px 10px;
 
-  margin: auto;
-  margin-bottom: 5px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -17,4 +15,11 @@
 }
 .span {
   border-bottom: 2px solid var(--main-color);
+}
+.pin {
+  position: absolute;
+  top: 5px;
+  right: 30px;
+  width: 50px;
+  cursor: pointer;
 }

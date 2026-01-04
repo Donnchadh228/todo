@@ -1,5 +1,6 @@
 .todo {
   --right-space: 5px;
+  --top-space: 20px;
   display: flex;
   justify-content: space-between;
   background-color: rgb(230, 229, 229);
@@ -9,6 +10,7 @@
   font-size: var(--main-font-size);
   margin-bottom: 5px;
   position: relative;
+  margin-top: var(--top-space);
 }
 .wrapperSettings {
   display: flex;
@@ -32,4 +34,13 @@
 .active {
   border-color: rgb(43, 223, 43);
   background-color: rgb(127, 224, 127);
+}
+.groupText {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(-1 * var(--top-space));
+  background-color: white;
+  padding: 2px 5px;
+  border-bottom: 2px solid var(--main-color);
 }

@@ -23,15 +23,23 @@ const MyCreate = ({ onCreate, isLoading, error, title, placeholder, uniqueResetK
     }
   }, [uniqueResetKey, resetName]);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim()) {
+      onCreate(name);
+      resetName(); // Очищаем поле после создания
+    }
+  };
+
   return (
     <div className={cl.CreateTodo}>
       {isLoading ? (
         <MyLoader />
       ) : (
-        <div className={cl.wrapper}>
+        <form onSubmit={handleSubmit} className={cl.wrapper}>
           <MyButton onClick={() => onCreate(name)}>{title}</MyButton>
           <MyInput placeholder={placeholder} value={name} onChange={setName} />
-        </div>
+        </form>
       )}
       {<div className="error">{error}</div>}
     </div>

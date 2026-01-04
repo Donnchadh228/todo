@@ -11,6 +11,9 @@ export const areTodoItemsEqual = (
   if (prevProps.todo.name !== nextProps.todo.name) {
     return false;
   }
+  if (prevProps.todo.groupId !== nextProps.todo.groupId) {
+    return false;
+  }
 
   return true;
 };

@@ -34,6 +34,8 @@ export const TodosCollectionActionTypes = {
 
   UPDATE_TODO_START: "UPDATE_TODO_START",
   UPDATE_TODO_ROLLBACK: "UPDATE_TODO_ROLLBACK",
+
+  SYNC_TODO_IN_GROUP: "SYNC_TODO_IN_GROUP",
 } as const;
 
 //TODOS
@@ -61,6 +63,10 @@ interface UPDATE_TODO_ROLLBACK {
   type: typeof TodosCollectionActionTypes.UPDATE_TODO_ROLLBACK;
   payload: { oldTodo: Todo };
 }
+interface SYNC_TODO_IN_GROUP {
+  type: typeof TodosCollectionActionTypes.SYNC_TODO_IN_GROUP;
+  payload: { newTodo: Todo; group: { name: string } };
+}
 
 export type todosAction =
   | FETCH_TODO
@@ -68,4 +74,5 @@ export type todosAction =
   | FETCH_TODO_ERROR
   | REMOVE_TODO_REMOVE
   | UPDATE_TODO_ROLLBACK
-  | UPDATE_TODO_START;
+  | UPDATE_TODO_START
+  | SYNC_TODO_IN_GROUP;
