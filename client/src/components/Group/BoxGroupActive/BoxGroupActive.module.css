@@ -1,0 +1,14 @@
+.groupWrapper {
+  width: 400px;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  z-index: 5;
+
+  border-top: 2px solid white;
+  border-right: 2px solid white;
+}
+.todoWrapper {
+  max-height: 250px;
+  overflow: auto;
+}

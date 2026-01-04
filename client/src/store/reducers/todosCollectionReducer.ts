@@ -68,6 +68,15 @@ export const todosReducer = (state = initialState, action: todosAction): TodosCo
       };
     }
 
+    case TodosCollectionActionTypes.SYNC_TODO_IN_GROUP: {
+      return {
+        ...state,
+        rows: state.rows.map(todo => {
+          return todo.id === action.payload.newTodo.id ? action.payload.newTodo : todo;
+        }),
+      };
+    }
+
     default:
       return state;
   }

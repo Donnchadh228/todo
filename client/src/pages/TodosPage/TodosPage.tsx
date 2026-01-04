@@ -7,6 +7,7 @@ import { Pagination } from "../../components/UI/Pagination/Pagination.tsx";
 
 import TodoCreate from "../../components/Todos/TodoCreate/TodoCreate.tsx";
 import { useAppDispatch, useTypedSelector } from "../../hooks/redux.ts";
+import BoxGroupActive from "../../components/Group/BoxGroupActive/BoxGroupActive.tsx";
 
 const TodosPage = () => {
   const [page, setPage] = useState<number>(1);
@@ -35,6 +36,7 @@ const TodosPage = () => {
       <TodosList style={{ marginBottom: 40, maxWidth: 500 }} todos={rows} />
 
       <Pagination page={page} totalPages={totalPages} changePage={setPage}></Pagination>
+      <BoxGroupActive />
     </div>
   );
 };

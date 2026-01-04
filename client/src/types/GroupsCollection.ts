@@ -3,14 +3,16 @@ import type { Todo } from "./todoItem.ts";
 export interface Group {
   id: number;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   userId: number;
 }
 export interface GroupWithTasks extends Group {
   tasks: Todo[];
 }
-
+export interface GroupActive extends GroupWithTasks {
+  isActive: boolean;
+}
 export interface GroupsCollectionResponse {
   count: number;
   rows: GroupWithTasks[];
@@ -34,6 +36,9 @@ export interface GroupCollectionState {
 
   createError: string | null;
   createLoading: boolean;
+
+  deleteTodoId: number[];
+  deleteTodoError: string | null;
 
   errorTimestamp?: number;
 }

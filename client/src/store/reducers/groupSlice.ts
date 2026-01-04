@@ -7,6 +7,7 @@ import {
 import { fetchGroups } from "../actionCreators/reduxToolkit/fetchGroups.ts";
 import { createGroup } from "../actionCreators/reduxToolkit/createGroup.ts";
 import { removeGroup } from "../actionCreators/reduxToolkit/removeGroups.ts";
+import { removeTodoFromGroup } from "../actionCreators/reduxToolkit/removeTodoFromGroup.ts";
 
 const initialState: GroupCollectionState = {
   count: 0,
@@ -23,6 +24,9 @@ const initialState: GroupCollectionState = {
 
   createLoading: false,
   createError: "",
+
+  deleteTodoId: [],
+  deleteTodoError: "",
 };
 
 export const groupSlice = createSlice({
@@ -33,6 +37,7 @@ export const groupSlice = createSlice({
       state.createError = null;
       state.fetchError = null;
       state.deleteError = null;
+      state.deleteTodoError = null;
     },
   },
   extraReducers: builder => {
@@ -89,6 +94,25 @@ export const groupSlice = createSlice({
       state.deleteError = (action.payload as string) || "Произошла ошибка при удалении группы";
       state.deletedId = state.deletedId.filter(id => id !== groupId);
       state.errorTimestamp = Date.now();
+    });
+
+    builder.addCase(removeTodoFromGroup.pending, (state, action) => {
+      const todoId = action.meta.arg.id;
+
+      state.deleteTodoId.push(todoId);
+    });
+    builder.addCase(removeTodoFromGroup.fulfilled, (state, action: PayloadAction<number>) => {
+      const todoId = action.payload;
+
+      state.deleteTodoId = state.deleteTodoId.filter(id => id !== todoId);
+      state.rows = state.rows.map(group => ({
+        ...group,
+        tasks: group.tasks.filter(task => task.id !== todoId),
+      }));
+    });
+    builder.addCase(removeTodoFromGroup.rejected, (state, action) => {
+      const todoId = action.meta.arg.id;
+      state.deleteTodoId = state.deleteTodoId.filter(id => id !== todoId);
     });
   },
 });

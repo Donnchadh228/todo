@@ -1,15 +1,14 @@
-import { useCallback, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import type { Todo } from "../../../types/todoItem.ts";
 import TodoItem from "../TodoItem/TodoItem.tsx";
 
-import { removeTodo } from "../../../store/actionCreators/todo/removeTodo.ts";
-import { updateTodo } from "../../../store/actionCreators/todo/updateTodo.ts";
 import { useErrorTimeout } from "../../../hooks/useErrorTimeout.ts";
 import { clearError } from "../../../store/actionCreators/todo/clearError.ts";
 import MyLoader from "../../UI/MyLoader/MyLoader.tsx";
 
 import cl from "./TodosList.module.css";
 import { useAppDispatch, useTypedSelector } from "../../../hooks/redux.ts";
+import { useTodoActions } from "../../../hooks/useTodoActions.ts";
 interface TodosListProps {
   todos: Todo[];
   style?: CSSProperties;
@@ -27,19 +26,7 @@ const TodosList = ({ todos, style }: TodosListProps) => {
     4000,
   );
 
-  const removeTodoHandler = useCallback(
-    (todo: Todo) => {
-      dispatch(removeTodo(todo));
-    },
-    [dispatch],
-  );
-
-  const updateTodoHandler = useCallback(
-    (updatedTodo: Todo, oldTodo: Todo) => {
-      dispatch(updateTodo(updatedTodo, oldTodo));
-    },
-    [dispatch],
-  );
+  const { removeTodo, updateTodo } = useTodoActions();
 
   return (
     <div className={cl.list} style={style}>
@@ -49,7 +36,7 @@ const TodosList = ({ todos, style }: TodosListProps) => {
         return loadingId === todo.id ? (
           <MyLoader key={todo.id} />
         ) : (
-          <TodoItem key={todo.id} todo={todo} onUpdateTodo={updateTodoHandler} onRemove={removeTodoHandler} />
+          <TodoItem key={todo.id} todo={todo} needNameGroup={true} onUpdateTodo={updateTodo} onRemove={removeTodo} />
         );
       })}
 
