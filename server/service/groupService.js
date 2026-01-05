@@ -25,15 +25,26 @@ class GroupService {
     return group;
   }
 
-  async getAllGroup(limit, offset, userId) {
+  async getAllGroup(options) {
+    const { limit, page, userId, sortBy, sortOrder, offset } = options;
+
     const groups = await Group.findAndCountAll({
-      include: [{ model: Task }],
+      include: [
+        {
+          model: Task,
+          separate: true,
+          order: [["id", "DESC"]],
+        },
+      ],
       where: { userId },
       limit,
       offset,
-      order: [["id", "DESC"]],
+      order: [[sortBy, sortOrder]],
     });
+
     groups.limit = limit;
+    groups.currentPage = page;
+
     return groups;
   }
 

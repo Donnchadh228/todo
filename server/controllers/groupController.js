@@ -24,15 +24,26 @@ class GroupController {
   }
   async getAllGroup(req, res, next) {
     try {
-      let { limit, page } = req.query;
+      let { limit, page, sortBy = "createdAt", sortOrder = "desc" } = req.query;
+
       const { id: userId } = req.user;
 
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 8;
 
       let offset = page * limit - limit;
-      const group = await groupService.getAllGroup(limit, offset, userId);
-      group.currentPage = page;
+
+      const options = {
+        limit,
+        offset,
+        userId,
+        page,
+        sortBy,
+        sortOrder,
+      };
+
+      const group = await groupService.getAllGroup(options);
+
       res.json(group);
     } catch (error) {
       next(error);
