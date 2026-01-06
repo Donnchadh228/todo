@@ -16,6 +16,8 @@ export interface TodosCollectionState {
   currentPage: number;
   totalPages: number;
   limit: number;
+
+  shouldFetch: boolean;
 }
 
 export interface TodosResponse {
@@ -36,6 +38,8 @@ export const TodosCollectionActionTypes = {
   UPDATE_TODO_ROLLBACK: "UPDATE_TODO_ROLLBACK",
 
   SYNC_TODO_IN_GROUP: "SYNC_TODO_IN_GROUP",
+
+  SHOULD_FETCH: "SHOULD_FETCH",
 } as const;
 
 //TODOS
@@ -67,6 +71,9 @@ interface SYNC_TODO_IN_GROUP {
   type: typeof TodosCollectionActionTypes.SYNC_TODO_IN_GROUP;
   payload: { newTodo: Todo; group: { name: string } };
 }
+interface SHOULD_FETCH {
+  type: typeof TodosCollectionActionTypes.SHOULD_FETCH;
+}
 
 export type todosAction =
   | FETCH_TODO
@@ -75,4 +82,5 @@ export type todosAction =
   | REMOVE_TODO_REMOVE
   | UPDATE_TODO_ROLLBACK
   | UPDATE_TODO_START
-  | SYNC_TODO_IN_GROUP;
+  | SYNC_TODO_IN_GROUP
+  | SHOULD_FETCH;

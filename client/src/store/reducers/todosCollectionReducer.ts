@@ -13,6 +13,8 @@ const initialState: TodosCollectionState = {
   limit: 9,
   isLoading: true,
   totalPages: 0,
+
+  shouldFetch: false,
 };
 
 export const todosReducer = (state = initialState, action: todosAction): TodosCollectionState => {
@@ -76,7 +78,12 @@ export const todosReducer = (state = initialState, action: todosAction): TodosCo
         }),
       };
     }
-
+    case TodosCollectionActionTypes.SHOULD_FETCH: {
+      return {
+        ...state,
+        shouldFetch: !state.shouldFetch,
+      };
+    }
     default:
       return state;
   }

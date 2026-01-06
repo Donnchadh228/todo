@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-todo
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrongPassw0rd
+      - MSSQL_PID=Express
+    volumes:
+      - mssql-data:/var/opt/mssql
+      - ./mssql-init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q "SELECT 1" -b -o /dev/null
+    networks:
+      - app-network
+
+  server:
+    build: ./server
+    container_name: express-server
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=mssql-todo
+      - DB_USERNAME=sa
+      - DB_PASSWORD=YourStrongPassw0rd
+      - DB_DATABASE=master
+      - DB_PORT=1433
+      - PORT=5000
+      - CLIENT_URL=http://localhost:5173
+    env_file:
+      - ./server/.development.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - mssql
+    restart: always
+    networks:
+      - app-network
+    command: sh -c "
+      echo 'Waiting for SQL Server to start...' &&
+      sleep 20 &&
+      npm run dev"
+
+  client:
+    build:
+      context: ./client
+    container_name: react-client
+    ports:
+      - "5173:5173"
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - server
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mssql-data:

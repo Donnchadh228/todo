@@ -15,13 +15,11 @@ const AppRouter = () => {
             return <Route path={route.path} element={<route.component />} />;
           })}
         </Route>
-
         <Route element={<PrivateRoute isAuth={isAuth} />}>
           {privateRoutes.map(route => {
             return <Route path={route.path} element={<route.component />} />;
           })}
         </Route>
-
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>

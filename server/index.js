@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: process.env.NODE_ENV === "production" ? ".production.env" : ".development.env" });
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");

@@ -9,9 +9,14 @@ import { useAppDispatch, useTypedSelector } from "../../hooks/redux.ts";
 import GroupCreate from "../../components/Group/GroupCreate/GroupCreate.tsx";
 import GroupList from "../../components/Group/GroupList/GroupList.tsx";
 import { clearGroupErrors } from "../../store/reducers/groupSlice.ts";
+import MySelect from "../../components/UI/MySelect/MySelect.tsx";
+import { optionsSort } from "../../types/selectOptions.ts";
+import { useInput } from "../../hooks/useInput.ts";
+import cl from "./GroupPage.module.css";
 
 const GroupPage = () => {
   const [page, setPage] = useState<number>(1);
+  const { value: sort, setValue: setSort } = useInput<string>("desc");
   const { rows, isLoading, fetchError, totalPages, deletedId, deleteError, errorTimestamp } = useTypedSelector(
     state => state.groupsReducer,
   );
@@ -27,12 +32,13 @@ const GroupPage = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchGroups(page));
-  }, [page, dispatch]);
+    dispatch(fetchGroups({ page, sort }));
+  }, [page, dispatch, sort]);
 
-  if (isLoading) {
-    return <MyLoader />;
-  }
+  const beforeSuccessCreate = () => {
+    if (page === 1) dispatch(fetchGroups({ page, sort }));
+    else setPage(1);
+  };
 
   if (fetchError) {
     return <div className="error">{fetchError}</div>;
@@ -40,11 +46,18 @@ const GroupPage = () => {
 
   return (
     <div>
+      <MySelect
+        className={cl.sort}
+        items={optionsSort.items}
+        firstOption="Сначала показывать:"
+        onChange={setSort}
+        value={sort}
+      />
       <div className="error">{deleteError}</div>
-      <GroupList rows={rows} loadingGroupIds={deletedId} />
+      {isLoading ? <MyLoader /> : <GroupList rows={rows} loadingGroupIds={deletedId} />}
 
       <Pagination page={page} changePage={setPage} totalPages={totalPages} />
-      <GroupCreate />
+      <GroupCreate onSuccess={beforeSuccessCreate} />
     </div>
   );
 };

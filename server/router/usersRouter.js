@@ -8,9 +8,10 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 router.post("/registration", authValidation, userController.registration);
 router.post("/login", authValidation, userController.login);
-router.delete("/logout/:tokenId", userController.logout);
+router.post("/refresh", userController.refresh);
 
 router.get("/check", authMiddleware, userController.check);
-router.post("/refresh", userController.refresh);
+
+router.delete("/logout/:tokenId", userController.logout);
 
 module.exports = router;

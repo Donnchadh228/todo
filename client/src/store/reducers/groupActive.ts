@@ -36,9 +36,14 @@ export const groupActive = createSlice({
       const newTodo = action.payload;
       state.tasks = state.tasks.map(todo => (newTodo.id === todo.id ? newTodo : todo));
     },
+    removeTodoFromGroup(state, action: PayloadAction<Todo>) {
+      const deletedTodo = action.payload;
+      state.tasks = state.tasks.filter(todo => deletedTodo.id !== todo.id);
+    },
   },
   // extraReducers: builder => {},
 });
 
 export default groupActive.reducer;
-export const { setDeactivateGroup, setActiveGroup, changeTodoSuccess, changeTodoInGroup } = groupActive.actions;
+export const { setDeactivateGroup, setActiveGroup, changeTodoSuccess, changeTodoInGroup, removeTodoFromGroup } =
+  groupActive.actions;
