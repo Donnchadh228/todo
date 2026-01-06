@@ -1,7 +1,7 @@
 const groupService = require("../service/groupService");
 
 jest.mock("../models/indexModel.js");
-const { Group } = require("../models/indexModel.js");
+const { Group, Task } = require("../models/indexModel.js");
 
 // Create - full oject
 // update - full objet
@@ -72,27 +72,65 @@ describe("Group test", () => {
   it("Should get all user groups", async () => {
     const userId = 1;
     const limit = 2;
-    const offset = 2;
+    const offset = 2,
+      sortBy = "id",
+      sortOrder = "desc",
+      page = 1;
+    const modelTask = {
+      id: 1,
+      name: "nameTask",
+      userId: 42,
+      groupId: null,
+      createAt: "2016-01-06",
+      updateAt: "2016-01-06",
+    };
 
     const allGroup = [
       { ...modelGroup },
       { ...modelGroup, id: 2, name: "group2" },
       { ...modelGroup, id: 3, name: "group3" },
-      { ...modelGroup, id: 4, name: "group4" },
+      { ...modelGroup, id: 4, name: "group4", tasks: [modelTask] },
     ];
 
     const params = { count: allGroup.length, rows: allGroup.slice(offset, offset + limit) };
     Group.findAndCountAll.mockResolvedValue(params);
 
-    const result = await groupService.getAllGroup(limit, offset, userId);
+    const options = { limit, page, userId, sortBy, sortOrder, offset };
+    const result = await groupService.getAllGroup(options);
 
     expect(result.count).toBe(4);
     expect(result.rows).toHaveLength(2);
+    expect(Group.findAndCountAll).toHaveBeenCalledWith({
+      include: [
+        {
+          model: Task,
+          separate: true,
+          order: [["id", "DESC"]],
+        },
+      ],
+      where: { userId: 1 },
+      limit: 2,
+      offset: 2,
+      order: [["id", "desc"]],
+    });
 
-    expect(Group.findAndCountAll).toHaveBeenCalledWith({ where: { userId }, limit, offset });
-
-    expect(result).toEqual({ count: 4, rows: [allGroup[2], allGroup[3]] });
+    expect(result).toEqual({ count: 4, rows: [allGroup[2], allGroup[3]], currentPage: page, limit: 2 });
     expect(result.rows[0].id).toBe(3);
     expect(result.rows[1].id).toBe(4);
+    expect(result.rows[1]).toStrictEqual({
+      ...modelGroup,
+      id: 4,
+      name: "group4",
+      tasks: [
+        {
+          id: 1,
+          name: "nameTask",
+          userId: 42,
+          groupId: null,
+          createAt: "2016-01-06",
+          updateAt: "2016-01-06",
+        },
+      ],
+    });
   });
 });
