@@ -28,7 +28,6 @@ class UserController {
 
       res.json(user);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -43,7 +42,6 @@ class UserController {
 
       res.json(token);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -57,7 +55,6 @@ class UserController {
       delete userData.refreshToken;
       res.json(userData);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -71,7 +68,6 @@ class UserController {
 
       res.json(userData);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

@@ -42,13 +42,13 @@ describe("Task test", () => {
     Task.findOne.mockResolvedValue({ ...mockTask });
 
     groupService.getOneGroup.mockResolvedValue({ name: "Group", userId: 2 });
-    const result = await taskService.changeTask(1, { name: "newTask" }, 2);
+    const result = await taskService.changeTask(1, { name: "newTask", status: 0 }, 2);
 
     expect(Task.findOne).toHaveBeenCalledTimes(1);
     expect(Task.findOne).toHaveBeenCalledWith({ where: { id: 1, userId: 2 } });
 
     expect(result.update).toHaveBeenCalledTimes(1);
-    expect(result).toEqual({ ...mockTask, name: newName, status: 0, groupId: undefined });
+    expect(result).toEqual({ ...mockTask, name: newName, status: 0, groupId: null });
   });
 
   it("Must delete task", async () => {

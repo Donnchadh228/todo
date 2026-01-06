@@ -9,7 +9,6 @@ class TaskController {
       const task = await taskService.createTask(name, userId, groupId);
       res.json(task);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -23,7 +22,6 @@ class TaskController {
 
       res.json(task);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -42,7 +40,6 @@ class TaskController {
       const tasks = await taskService.getAllTasks(options);
       res.json(tasks);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -55,7 +52,6 @@ class TaskController {
       const task = await taskService.removeTask(id, userId);
       res.json(task);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -67,7 +63,6 @@ class TaskController {
 
       res.json(task);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
