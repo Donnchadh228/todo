@@ -14,7 +14,7 @@ export const updateTodo = (updatedTodo: Todo, oldTodo: Todo) => {
         status: updatedTodo.status,
         name: updatedTodo.name,
       });
-
+      dispatch({ type: TodosCollectionActionTypes.SHOULD_FETCH });
       dispatch({ type: TodoItemActionTypes.UPDATE_TODO_SUCCESS, payload: response.data });
     } catch (error) {
       const message = getErrorMessage(error);

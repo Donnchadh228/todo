@@ -3,13 +3,11 @@ import { clearError } from "../../../store/actionCreators/todo/clearError.ts";
 import { useErrorTimeout } from "../../../hooks/useErrorTimeout.ts";
 import { useAppDispatch, useTypedSelector } from "../../../hooks/redux.ts";
 import MyCreate from "../../UI/MyCreate/MyCreate.tsx";
-import { useState } from "react";
 
 interface createTodoProps {
   onSuccess: () => void;
 }
 const CreateTodo = ({ onSuccess = () => {} }: createTodoProps) => {
-  const [resetKey, setResetKey] = useState<number>(0);
   const { createError, isLoading, errorTimestamp } = useTypedSelector(state => state.todo);
   const dispatch = useAppDispatch();
 
@@ -24,7 +22,6 @@ const CreateTodo = ({ onSuccess = () => {} }: createTodoProps) => {
   const onCreateTodo = (name: string) => {
     dispatch(createTodo(name)).then(() => {
       onSuccess();
-      setResetKey(prev => prev + 1);
     });
   };
 
@@ -35,7 +32,6 @@ const CreateTodo = ({ onSuccess = () => {} }: createTodoProps) => {
       isLoading={isLoading}
       error={createError}
       onCreate={onCreateTodo}
-      uniqueResetKey={resetKey}
     />
   );
 };
