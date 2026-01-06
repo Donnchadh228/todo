@@ -1,6 +1,5 @@
 import { type AuthResponse } from "../../../types/auth.ts";
 
-import { API_URL } from "../../../utils/const.ts";
 import axios from "axios";
 
 export const refreshToken = async (): Promise<void> => {
@@ -9,7 +8,11 @@ export const refreshToken = async (): Promise<void> => {
     throw new Error("Нет идентификатора токена");
   }
 
-  const response = await axios.post<AuthResponse>(`${API_URL}/user/refresh`, { tokenId }, { withCredentials: true });
+  const response = await axios.post<AuthResponse>(
+    `${import.meta.env.VITE_URL_SERVER}/user/refresh`,
+    { tokenId },
+    { withCredentials: true },
+  );
 
   localStorage.setItem("tokenId", response.data.tokenId.toString());
   localStorage.setItem("accessToken", response.data.accessToken);

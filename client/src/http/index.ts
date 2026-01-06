@@ -1,16 +1,15 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
-import { API_URL } from "../utils/const.ts";
 
 import { handleSessionExpired, refreshToken } from "../store/actionCreators/auth/refreshToken.ts";
 
 const $host = axios.create({
   withCredentials: true,
-  baseURL: API_URL,
+  baseURL: import.meta.env.VITE_URL_SERVER,
 });
 
 const $authHost = axios.create({
   withCredentials: true,
-  baseURL: API_URL,
+  baseURL: import.meta.env.VITE_URL_SERVER,
 });
 
 const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
