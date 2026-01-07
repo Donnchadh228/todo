@@ -6,11 +6,14 @@ const { taskValidation } = require("../validation/taskValidation");
 
 const { Task } = require("../models/indexModel.js");
 
-// create - delete - change - readAll - read
+// create - readAll - read - change - delete
 router.post("/", taskValidation, taskController.createTask);
-router.delete("/:id", taskController.deleteTask);
-router.put("/:id", taskValidation, taskController.changeTask);
+
 router.get("/", taskController.getAllTasks);
 router.get("/:id", taskController.getOneTask);
+
+router.put("/:id", taskValidation, taskController.changeTask);
+
+router.delete("/:id", taskController.deleteTask);
 
 module.exports = router;

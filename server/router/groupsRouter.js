@@ -4,11 +4,14 @@ const router = new Router();
 const groupController = require("../controllers/groupController");
 const { groupValidation } = require("../validation/groupValidation");
 
-// create - get - remove - change
+// create - get -  change - remove
 
 router.post("/", groupValidation, groupController.createGroup);
+
 router.get("/", groupController.getAllGroup);
-router.delete("/:id", groupController.removeGroup);
+
 router.put("/:id", groupValidation, groupController.changeGroup);
+
+router.delete("/:id", groupController.removeGroup);
 
 module.exports = router;
