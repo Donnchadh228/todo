@@ -1,7 +1,7 @@
-const { Task, Group } = require("../models/indexModel.js");
+const { Task, Group } = require('../models/indexModel.js');
 
-const ApiError = require("../expectations/apiError.js");
-const groupService = require("./groupService.js");
+const ApiError = require('../expectations/apiError.js');
+const groupService = require('./groupService.js');
 
 class TaskService {
   async createTask(name, userId, groupId) {
@@ -9,10 +9,10 @@ class TaskService {
     return task;
   }
 
-  async changeTask(taskId, updates, userId) {
+  async updateTask(taskId, updates, userId) {
     // Если переносим задачу в другую группу
     if (updates.groupId) {
-      const group = await groupService.getOneGroup(updates.groupId, userId);
+      const group = await groupService.getGroup(updates.groupId, userId);
 
       if (!group) {
         throw ApiError.Forbidden();
@@ -21,7 +21,7 @@ class TaskService {
 
     const task = await Task.findOne({ where: { id: taskId, userId } });
     if (!task) {
-      throw ApiError.BadRequest("Данная задача отсутствует, невозможно провести изменения");
+      throw ApiError.BadRequest('Данная задача отсутствует, невозможно провести изменения');
     }
 
     await task.update({ ...updates });
@@ -41,7 +41,7 @@ class TaskService {
       where: whereClause,
       limit,
       offset,
-      include: [{ model: Group, attributes: ["name"] }],
+      include: [{ model: Group, attributes: ['name'] }],
       order: [[sortBy, sortOrder]],
     });
     tasks.limit = limit;
@@ -49,18 +49,18 @@ class TaskService {
     return tasks;
   }
 
-  async removeTask(taskId, userId) {
+  async deleteTask(taskId, userId) {
     const task = await Task.destroy({ where: { id: taskId, userId } });
     if (!task) {
-      throw ApiError.BadRequest("Данной задачи нет или у вас нет доступа к ней");
+      throw ApiError.BadRequest('Данной задачи нет или у вас нет доступа к ней');
     }
     return task;
   }
 
-  async getOneTask(taskId, userId) {
+  async getTask(taskId, userId) {
     const task = await Task.findOne({ where: { id: taskId, userId } });
-    if (!group) {
-      throw ApiError.BadRequest("Такой задачи не существует или у вас нет доступа к ней");
+    if (!task) {
+      throw ApiError.BadRequest('Такой задачи не существует или у вас нет доступа к ней');
     }
 
     return task;

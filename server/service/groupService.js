@@ -1,5 +1,5 @@
-const ApiError = require("../expectations/apiError.js");
-const { Group, User, Task } = require("../models/indexModel.js");
+const ApiError = require('../expectations/apiError.js');
+const { Group, Task } = require('../models/indexModel.js');
 
 class GroupService {
   async createGroup(name, userId) {
@@ -8,24 +8,25 @@ class GroupService {
     return group;
   }
 
-  async changeGroup(id, name, userId) {
+  async updateGroup(id, name, userId) {
     const group = await Group.findOne({ where: { id, userId } });
     if (!group) {
-      throw ApiError.BadRequest("Такой группы нет или у вас нет к ней прав");
+      throw ApiError.BadRequest('Такой группы нет или у вас нет к ней прав');
     }
+
     group.name = name;
     await group.save();
 
     return group;
   }
 
-  async removeGroup(id, userId) {
+  async deleteGroup(id, userId) {
     const group = await Group.destroy({ where: { id, userId } });
 
     return group;
   }
 
-  async getAllGroup(options) {
+  async getAllGroups(options) {
     const { limit, page, userId, sortBy, sortOrder, offset } = options;
 
     const groups = await Group.findAndCountAll({
@@ -33,7 +34,7 @@ class GroupService {
         {
           model: Task,
           separate: true,
-          order: [["id", "DESC"]],
+          order: [['id', 'DESC']],
         },
       ],
       where: { userId },
@@ -48,10 +49,10 @@ class GroupService {
     return groups;
   }
 
-  async getOneGroup(id, userId) {
+  async getGroup(id, userId) {
     const group = await Group.findOne({ where: { id, userId } });
     if (!group) {
-      throw ApiError.BadRequest("Такой группы не существует или у вас нет доступа к ней");
+      throw ApiError.BadRequest('Такой группы не существует или у вас нет доступа к ней');
     }
 
     return group;

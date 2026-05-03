@@ -1,8 +1,9 @@
-const jwt = require("jsonwebtoken");
-const { Token } = require("../models/indexModel");
-const ApiError = require("../expectations/apiError");
+const jwt = require('jsonwebtoken');
+const { Token, User } = require('../models/indexModel');
+const ApiError = require('../expectations/apiError');
 
 class TokenService {
+  _MAX_COUNT_SESSION = 3;
   generateToken(payload) {
     const accessToken = jwt.sign(payload, process.env.SECRETKEY, {
       expiresIn: process.env.ACCESS_TOKEN_TIME,
@@ -21,12 +22,21 @@ class TokenService {
     return token;
   }
 
-  async removeToken(id, refreshToken) {
-    const isDeleted = await Token.destroy({ where: { id, refreshToken } });
-    if (!isDeleted) {
-      throw ApiError.BadRequest("Ошибка при удалении токена");
-    }
-    return isDeleted;
+  async deleteToken(refreshToken) {
+    const deletedCount = await Token.destroy({ where: { refreshToken } });
+    return deletedCount > 0;
+  }
+
+  async findTokenWithUser(refreshToken) {
+    return await Token.findOne({
+      where: { refreshToken },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'login', 'role'],
+        },
+      ],
+    });
   }
 
   validateAccessToken(accessToken) {
@@ -34,6 +44,7 @@ class TokenService {
       const userData = jwt.verify(accessToken, process.env.SECRETKEY);
       return userData;
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
@@ -43,20 +54,47 @@ class TokenService {
       const userData = jwt.verify(refreshToken, process.env.SECRETKEY_REFRESH);
       return userData;
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
 
-  async updateToken(userData, refreshToken, tokenIdDb) {
-    const destroyToken = await this.removeToken(tokenIdDb, refreshToken);
-    if (!destroyToken) {
-      throw ApiError.BadRequest("ошибка при удалении токена");
+  async refreshToken(refreshToken) {
+    const tokenRecord = await this.findTokenWithUser(refreshToken);
+    if (!tokenRecord) {
+      throw ApiError.Unauthorized('Неверный токен обновления');
     }
 
-    const generatedTokens = this.generateToken({ ...userData });
-    const { id: tokenId } = await this.saveToken(userData.id, generatedTokens.refreshToken);
+    const destroyToken = await this.deleteToken(refreshToken);
 
-    return { user: userData, ...generatedTokens, tokenId };
+    if (!destroyToken) {
+      throw ApiError.BadRequest('ошибка при удалении токена');
+    }
+
+    const userFromDb = tokenRecord.user;
+    const payload = {
+      id: userFromDb.id,
+      login: userFromDb.login,
+      role: userFromDb.role,
+    };
+
+    const generatedTokens = this.generateToken(payload);
+
+    await this.saveToken(userFromDb.id, generatedTokens.refreshToken);
+
+    return generatedTokens;
+  }
+
+  async enforceSessionLimit(userId) {
+    const count = await Token.count({ where: { userId } });
+
+    if (count >= this._MAX_COUNT_SESSION) {
+      const oldestSession = await Token.findOne({
+        where: { userId },
+        order: [['createdAt', 'ASC']],
+      });
+      await oldestSession.destroy();
+    }
   }
 }
 module.exports = new TokenService();

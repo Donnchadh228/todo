@@ -1,13 +1,13 @@
-const ApiError = require("../expectations/apiError.js");
-const tokenService = require("../service/tokenService.js");
+const ApiError = require('../expectations/apiError.js');
+const tokenService = require('../service/tokenService.js');
 
-module.exports = (req, res, next) => {
+module.exports = function (req, res, next) {
   try {
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
       return next(ApiError.Unauthorized());
     }
-    const accessToken = authorizationHeader.split(" ")[1];
+    const accessToken = authorizationHeader.split(' ')[1];
     if (!accessToken) {
       return next(ApiError.Unauthorized());
     }
@@ -19,6 +19,7 @@ module.exports = (req, res, next) => {
     req.user = userData;
     next();
   } catch (error) {
+    console.log(error);
     return next(ApiError.Unauthorized());
   }
 };

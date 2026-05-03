@@ -1,4 +1,4 @@
-const taskService = require("../service/taskService");
+const taskService = require('../service/taskService');
 
 class TaskController {
   async createTask(req, res, next) {
@@ -7,20 +7,22 @@ class TaskController {
       const userId = req.user.id;
 
       const task = await taskService.createTask(name, userId, groupId);
-      res.json(task);
+
+      return res.json(task);
     } catch (error) {
       next(error);
     }
   }
 
-  async changeTask(req, res, next) {
+  async updateTask(req, res, next) {
     try {
       const { id } = req.params;
-      const changedParams = req.body;
+      const updates = req.body;
+      const userId = req.user.id;
 
-      const task = await taskService.changeTask(id, changedParams, req.user.id);
+      const updatedTask = await taskService.updateTask(id, updates, userId);
 
-      res.json(task);
+      return res.json(updatedTask);
     } catch (error) {
       next(error);
     }
@@ -28,17 +30,25 @@ class TaskController {
 
   async getAllTasks(req, res, next) {
     try {
-      let { sortBy = "createdAt", sortOrder = "desc", limit, page, status } = req.query;
+      let { sortBy = 'createdAt', sortOrder = 'desc', limit, page, status } = req.query;
       const userId = req.user.id;
-      page = parseInt(page) || 1;
-      limit = parseInt(limit) || 9;
+      page = parseInt(page, 10) || 1;
+      limit = parseInt(limit, 10) || 9;
 
-      let offset = page * limit - limit;
+      let offset = (page - 1) * limit;
 
-      const options = { limit, offset, userId, sortBy, sortOrder, status: status ? parseInt(status) : undefined };
+      const options = {
+        limit,
+        offset,
+        userId,
+        sortBy,
+        sortOrder,
+        status: status ? parseInt(status, 10) : undefined,
+      };
 
       const tasks = await taskService.getAllTasks(options);
-      res.json(tasks);
+
+      return res.json(tasks);
     } catch (error) {
       next(error);
     }
@@ -49,19 +59,22 @@ class TaskController {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const task = await taskService.removeTask(id, userId);
-      res.json(task);
+      const deletedTask = await taskService.deleteTask(id, userId);
+
+      return res.json(deletedTask);
     } catch (error) {
       next(error);
     }
   }
-  async getOneTask(req, res, next) {
+
+  async getTask(req, res, next) {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const task = await taskService.getOneTask(id, userId);
 
-      res.json(task);
+      const task = await taskService.getTask(id, userId);
+
+      return res.json(task);
     } catch (error) {
       next(error);
     }

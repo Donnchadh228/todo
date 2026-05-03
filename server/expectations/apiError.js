@@ -6,7 +6,7 @@ module.exports = class ApiError extends Error {
     super(message);
     this.status = status;
 
-    if (Array.isArray(errors) && errors.every(e => e && e.msg)) {
+    if (Array.isArray(errors) && errors.every((e) => e && e.msg)) {
       this.errors = errors;
     } else {
       this.errors = [{ msg: message }];
@@ -18,10 +18,10 @@ module.exports = class ApiError extends Error {
   }
 
   static Unauthorized() {
-    return new ApiError(401, "Пользователь не авторизован", ["Не авторизован"]);
+    return new ApiError(401, 'Пользователь не авторизован', ['Не авторизован']);
   }
 
   static Forbidden() {
-    return new ApiError(403, "Нет прав доступа", ["Доступ запрещён"]);
+    return new ApiError(403, 'Нет прав доступа', ['Доступ запрещён']);
   }
 };

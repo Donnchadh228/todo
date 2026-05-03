@@ -1,19 +1,16 @@
-const Router = require("express");
+const Router = require('express');
 const router = new Router();
 
-const taskController = require("../controllers/taskController");
-const { taskValidation } = require("../validation/taskValidation");
+const taskController = require('../controllers/taskController');
+const { taskValidation } = require('../validation/taskValidation');
 
-const { Task } = require("../models/indexModel.js");
+router.post('/', taskValidation, taskController.createTask);
 
-// create - readAll - read - change - delete
-router.post("/", taskValidation, taskController.createTask);
+router.get('/', taskController.getAllTasks);
+router.get('/:id', taskController.getTask);
 
-router.get("/", taskController.getAllTasks);
-router.get("/:id", taskController.getOneTask);
+router.put('/:id', taskValidation, taskController.updateTask);
 
-router.put("/:id", taskValidation, taskController.changeTask);
-
-router.delete("/:id", taskController.deleteTask);
+router.delete('/:id', taskController.deleteTask);
 
 module.exports = router;

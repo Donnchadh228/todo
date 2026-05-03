@@ -1,13 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-  const Token = sequelize.define("token", {
+  const Token = sequelize.define('token', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    refreshToken: { type: DataTypes.STRING },
+    refreshToken: { type: DataTypes.STRING, unique: true },
     expiryDate: { type: DataTypes.DATE },
   });
 
   Token.associate = function (models) {
     Token.belongsTo(models.User, {
-      foreignKey: "userId",
+      foreignKey: 'userId',
     });
   };
 
