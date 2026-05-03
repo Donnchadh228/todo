@@ -1,89 +1,40 @@
-const { User, Token } = require("../models/indexModel");
-const ApiError = require("../expectations/apiError.js");
-const bcrypt = require("bcrypt");
-const UserDto = require("../dtos/userDto.js");
-const tokenService = require("../service/tokenService.js");
+const bcrypt = require('bcrypt');
+const UserDto = require('../dtos/userDto.js');
+const UserRepository = require('../repositories/userRepository.js');
+const ApiError = require('../expectations/apiError.js');
 
 class UserService {
-  async registration(login, password) {
-    const candidate = await User.findOne({ where: { login } });
-    if (candidate) {
-      throw ApiError.BadRequest("Данный пользователь уже есть");
-    }
-
-    const hashPassword = await bcrypt.hash(password, 3);
-    const user = await User.create({ login, password: hashPassword });
-
-    const userDto = new UserDto(user);
-
-    const generatedJWT = tokenService.generateToken({ ...userDto });
-    const { id: tokenId } = await tokenService.saveToken(userDto.id, generatedJWT.refreshToken);
-
-    return { user: userDto, ...generatedJWT, tokenId };
+  _SALT = 3;
+  constructor(UserRepository) {
+    this.UserRepository = UserRepository;
   }
 
-  async login(login, password) {
-    const user = await User.findOne({ where: { login } });
+  async getUserByLogin(login) {
+    const user = await this.UserRepository.getUserByLogin(login);
     if (!user) {
-      throw ApiError.BadRequest("Неверный логин");
+      throw ApiError.NotFound('Пользователь не найден');
     }
-
-    const count = await Token.count({ where: { userId: user.id } });
-
-    if (count >= 3) {
-      const oldestSession = await Token.findOne({ where: { userId: user.id }, order: [["createdAt", "ASC"]] });
-      await oldestSession.destroy();
-    }
-
-    const isPassEqual = await bcrypt.compare(password, user.password);
-    if (!isPassEqual) {
-      throw ApiError.BadRequest("Неверный пароль");
-    }
-
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateToken({ ...userDto });
-
-    const { id: tokenId } = await tokenService.saveToken(user.id, tokens.refreshToken);
-
-    return { user: userDto, ...tokens, tokenId };
+    return user;
   }
 
-  async logout(id, refreshToken) {
-    const token = await tokenService.removeToken(id, refreshToken);
-    return token;
-  }
-  async refreshToken(refreshToken, tokenId) {
-    const payload = tokenService.validateRefreshToken(refreshToken);
-    if (!payload) {
-      throw ApiError.Unauthorized("Пользователь не авторизованный");
-    }
-
-    const dataFromDb = await Token.findOne({
-      where: { id: tokenId, refreshToken },
-      include: [
-        {
-          model: User,
-          attributes: ["id", "login", "role"],
-        },
-      ],
-      raw: true,
-      nest: true,
-    });
-    if (!dataFromDb) {
-      throw ApiError.Unauthorized("Пользователь не авторизованный");
-    }
-
-    const userDto = new UserDto(dataFromDb.user);
-
-    const data = await tokenService.updateToken(userDto, dataFromDb.refreshToken, tokenId);
-
-    return data;
+  async findUserByLogin(login) {
+    return await this.UserRepository.findByLogin(login);
   }
 
-  getUserData(user, tokenId) {
-    const responseData = { user: { ...user }, tokenId };
-    return responseData;
+  async createUser(login, password) {
+    const existingUser = await this.findUserByLogin(login);
+    if (existingUser) {
+      throw ApiError.BadRequest('Пользователь уже существует');
+    }
+
+    const hashPassword = await bcrypt.hash(password, this._SALT);
+    return await this.UserRepository.createUser(login, hashPassword);
+  }
+
+  getUserDto(user) {
+    return { ...new UserDto(user) };
   }
 }
 
-module.exports = new UserService();
+const userRepository = new UserRepository();
+module.exports = new UserService(userRepository);

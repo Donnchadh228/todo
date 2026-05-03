@@ -1,4 +1,4 @@
-const groupService = require("../service/groupService");
+const groupService = require('../service/groupService');
 
 class GroupController {
   async createGroup(req, res, next) {
@@ -7,31 +7,33 @@ class GroupController {
       const userId = req.user.id;
 
       const group = await groupService.createGroup(name, userId);
-      res.json(group);
+
+      return res.json(group);
     } catch (error) {
       next(error);
     }
   }
-  async removeGroup(req, res, next) {
+  async deleteGroup(req, res, next) {
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const removedGroup = await groupService.removeGroup(id, userId);
-      res.json(removedGroup);
+
+      const deletedGroup = await groupService.deleteGroup(id, userId);
+
+      return res.json(deletedGroup);
     } catch (error) {
       next(error);
     }
   }
-  async getAllGroup(req, res, next) {
+  async getAllGroups(req, res, next) {
     try {
-      let { limit, page, sortBy = "createdAt", sortOrder = "desc" } = req.query;
-
+      let { limit, page, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
       const { id: userId } = req.user;
 
-      page = parseInt(page) || 1;
-      limit = parseInt(limit) || 8;
+      page = parseInt(page, 10) || 1;
+      limit = parseInt(limit, 10) || 8;
 
-      let offset = page * limit - limit;
+      let offset = (page - 1) * limit;
 
       const options = {
         limit,
@@ -42,20 +44,23 @@ class GroupController {
         sortOrder,
       };
 
-      const group = await groupService.getAllGroup(options);
+      const groups = await groupService.getAllGroups(options);
 
-      res.json(group);
+      return res.json(groups);
     } catch (error) {
       next(error);
     }
   }
-  async changeGroup(req, res, next) {
+  async updateGroup(req, res, next) {
     try {
       const { id } = req.params;
       const { name } = req.body;
+
       const userId = req.user.id;
-      const newGroup = await groupService.changeGroup(id, name, userId);
-      res.json(newGroup);
+
+      const updatedGroup = await groupService.updateGroup(id, name, userId);
+
+      return res.json(updatedGroup);
     } catch (error) {
       next(error);
     }

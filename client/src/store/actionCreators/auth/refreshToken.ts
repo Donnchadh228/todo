@@ -1,24 +1,26 @@
-import { type AuthResponse } from "../../../types/auth.ts";
+import { type RefreshResponse } from '../../../types/auth.ts';
 
-import axios from "axios";
+import axios from 'axios';
 
 export const refreshToken = async (): Promise<void> => {
-  const tokenId = localStorage.getItem("tokenId");
-  if (!tokenId) {
-    throw new Error("Нет идентификатора токена");
+  try {
+    const response = await axios.post<RefreshResponse>(
+      `${import.meta.env.VITE_URL_SERVER}/user/refresh`,
+      {},
+      { withCredentials: true }
+    );
+
+    localStorage.setItem('accessToken', response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.log(error.response.data.message);
+      }
+    }
   }
-
-  const response = await axios.post<AuthResponse>(
-    `${import.meta.env.VITE_URL_SERVER}/user/refresh`,
-    { tokenId },
-    { withCredentials: true },
-  );
-
-  localStorage.setItem("tokenId", response.data.tokenId.toString());
-  localStorage.setItem("accessToken", response.data.accessToken);
 };
 
 export const handleSessionExpired = () => {
-  window.dispatchEvent(new CustomEvent("auth:session-expired"));
+  window.dispatchEvent(new CustomEvent('auth:session-expired'));
   localStorage.clear();
 };
