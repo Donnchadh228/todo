@@ -24,4 +24,7 @@ module.exports = class ApiError extends Error {
   static Forbidden() {
     return new ApiError(403, 'Нет прав доступа', ['Доступ запрещён']);
   }
+  static NotFound(message) {
+    return new ApiError(404, message, errors);
+  }
 };

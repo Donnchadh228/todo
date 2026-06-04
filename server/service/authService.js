@@ -4,56 +4,53 @@ const userService = require('./userService.js');
 const bcrypt = require('bcrypt');
 
 class AuthService {
-  async generateAuthResult(userData) {
-    const generatedJWT = tokenService.generateToken(userData);
-    await tokenService.saveToken(userData.id, generatedJWT.refreshToken);
+  constructor(userService, tokenService) {
+    this.userService = userService;
+    this.tokenService = tokenService;
+  }
 
+  generateAuthResponse(userData, generatedJWT) {
     return { user: userData, ...generatedJWT };
   }
 
   async registration(login, password) {
-    const candidate = await userService.getUserByLogin(login);
+    const newUser = await this.userService.createUser(login, password);
 
-    if (candidate) {
-      throw ApiError.BadRequest('Данный пользователь уже существует');
-    }
+    // Выделить в отдельный общий метод
+    const payload = this.userService.getUserDto(newUser);
+    const generatedJWT = this.tokenService.generateToken(payload);
+    const authResponse = this.generateAuthResponse(payload, generatedJWT);
 
-    const user = await userService.createUser(login, password);
-
-    const payload = {
-      id: user.id,
-      login: user.login,
-      role: user.role,
-    };
-    return await this.generateAuthResult(payload);
+    await this.tokenService.saveToken(payload.id, authResponse.refreshToken);
+    return authResponse;
   }
 
   async login(login, password) {
-    const user = await userService.getUserByLogin(login);
+    const user = await this.userService.findUserByLogin(login);
     if (!user) {
       throw ApiError.BadRequest('Неверный логин');
     }
 
-    await tokenService.enforceSessionLimit(user.id);
     const isPassEqual = await bcrypt.compare(password, user.password);
-
     if (!isPassEqual) {
       throw ApiError.BadRequest('Неверный пароль');
     }
 
-    const userData = {
-      id: user.id,
-      login: user.login,
-      role: user.role,
-    };
+    // Выделить в отдельный общий метод
+    const payload = this.userService.getUserDto(user);
+    const generatedJWT = this.tokenService.generateToken(payload);
+    const authResponse = this.generateAuthResponse(payload, generatedJWT);
 
-    return await this.generateAuthResult(userData);
+    await this.tokenService.enforceSessionLimit(user.id);
+    await this.tokenService.saveToken(payload.id, authResponse.refreshToken);
+
+    return authResponse;
   }
 
   async logout(refreshToken) {
-    const token = await tokenService.deleteToken(refreshToken);
+    const token = await this.tokenService.deleteToken(refreshToken);
     return token;
   }
 }
 
-module.exports = new AuthService();
+module.exports = new AuthService(userService, tokenService);

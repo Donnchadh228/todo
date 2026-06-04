@@ -4,12 +4,14 @@ const validationMiddleware = require('../middleware/validationMiddleware');
 const authValidation = [
   body('login')
     .trim()
+    .notEmpty()
     .isLength({ min: 3, max: 8 })
     .withMessage('Логин должен быть 3-8 символов')
     .matches(/^[a-zA-Z0-9_]+$/)
     .withMessage('Только латинские буквы, цифры и _'),
 
   body('password')
+    .trim()
     .notEmpty()
     .withMessage('Пароль обязателен')
     .isLength({ min: 3, max: 12 })

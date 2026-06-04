@@ -1,62 +1,55 @@
 const ApiError = require('../expectations/apiError.js');
-const { Group, Task } = require('../models/indexModel.js');
+const GroupRepository = require('../repositories/groupRepository.js');
 
 class GroupService {
-  async createGroup(name, userId) {
-    const group = await Group.create({ name, userId });
+  constructor(groupRepository) {
+    this.groupRepository = groupRepository;
+  }
+
+  async createGroup(title, userId) {
+    const group = await this.groupRepository.create(title, userId);
 
     return group;
   }
 
-  async updateGroup(id, name, userId) {
-    const group = await Group.findOne({ where: { id, userId } });
-    if (!group) {
-      throw ApiError.BadRequest('Такой группы нет или у вас нет к ней прав');
+  async updateGroup(id, userId, newTitle) {
+    const updatedGroup = await this.groupRepository.update(id, userId, newTitle);
+    if (!updatedGroup) {
+      throw ApiError.Forbidden('Такой группы нет или у вас нет к ней прав');
     }
 
-    group.name = name;
-    await group.save();
-
-    return group;
+    return updatedGroup;
   }
 
   async deleteGroup(id, userId) {
-    const group = await Group.destroy({ where: { id, userId } });
+    const group = await this.groupRepository.delete(id, userId);
 
     return group;
   }
 
   async getAllGroups(options) {
     const { limit, page, userId, sortBy, sortOrder, offset } = options;
-
-    const groups = await Group.findAndCountAll({
-      include: [
-        {
-          model: Task,
-          separate: true,
-          order: [['id', 'DESC']],
-        },
-      ],
-      where: { userId },
+    const whereClause = { userId };
+    const groups = await this.groupRepository.findAndCount({
+      whereClause,
       limit,
       offset,
-      order: [[sortBy, sortOrder]],
+      sortBy,
+      sortOrder,
     });
 
-    groups.limit = limit;
-    groups.currentPage = page;
-
-    return groups;
+    return { ...groups, limit, currentPage: page };
   }
 
   async getGroup(id, userId) {
-    const group = await Group.findOne({ where: { id, userId } });
+    const group = await this.groupRepository.findById(id, userId);
     if (!group) {
-      throw ApiError.BadRequest('Такой группы не существует или у вас нет доступа к ней');
+      throw ApiError.Forbidden('Такой группы не существует или у вас нет доступа к ней');
     }
 
     return group;
   }
 }
 
-module.exports = new GroupService();
+const groupRepository = new GroupRepository();
+module.exports = new GroupService(groupRepository);

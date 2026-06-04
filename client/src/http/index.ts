@@ -1,6 +1,6 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 
-import { handleSessionExpired, refreshToken } from "../store/actionCreators/auth/refreshToken.ts";
+import { handleSessionExpired, refreshToken } from '../store/actionCreators/auth/refreshToken.ts';
 
 const $host = axios.create({
   withCredentials: true,
@@ -14,7 +14,7 @@ const $authHost = axios.create({
 
 const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   if (config.headers) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
   }
   return config;
 };
@@ -22,11 +22,11 @@ const authInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosReque
 $authHost.interceptors.request.use(authInterceptor);
 
 $authHost.interceptors.response.use(
-  config => {
+  (config) => {
     return config;
   },
 
-  async error => {
+  async (error) => {
     const originalRequest = error.config;
 
     if (error.response.status === 401 && error.config && !originalRequest._isRetry) {
@@ -36,11 +36,12 @@ $authHost.interceptors.response.use(
         return $authHost.request(originalRequest);
       } catch (error) {
         handleSessionExpired();
+
         return Promise.reject(error);
       }
     }
     throw error;
-  },
+  }
 );
 
 export { $host, $authHost };

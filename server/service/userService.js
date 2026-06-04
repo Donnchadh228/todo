@@ -1,25 +1,40 @@
-const { User } = require('../models/indexModel');
 const bcrypt = require('bcrypt');
 const UserDto = require('../dtos/userDto.js');
+const UserRepository = require('../repositories/userRepository.js');
+const ApiError = require('../expectations/apiError.js');
 
 class UserService {
+  _SALT = 3;
+  constructor(UserRepository) {
+    this.UserRepository = UserRepository;
+  }
+
   async getUserByLogin(login) {
-    const user = await User.findOne({ where: { login } });
+    const user = await this.UserRepository.getUserByLogin(login);
+    if (!user) {
+      throw ApiError.NotFound('Пользователь не найден');
+    }
     return user;
   }
 
-  async createUser(login, password) {
-    const hashPassword = await bcrypt.hash(password, 3);
-
-    return await User.create({ login, password: hashPassword });
+  async findUserByLogin(login) {
+    return await this.UserRepository.findByLogin(login);
   }
 
-  formatAuthResponse(user) {
-    const userData = new UserDto(user);
-    // const responseData = { user: { ...userData }, tokenId };
-    const responseData = { user: { ...userData } };
-    return responseData;
+  async createUser(login, password) {
+    const existingUser = await this.findUserByLogin(login);
+    if (existingUser) {
+      throw ApiError.BadRequest('Пользователь уже существует');
+    }
+
+    const hashPassword = await bcrypt.hash(password, this._SALT);
+    return await this.UserRepository.createUser(login, hashPassword);
+  }
+
+  getUserDto(user) {
+    return { ...new UserDto(user) };
   }
 }
 
-module.exports = new UserService();
+const userRepository = new UserRepository();
+module.exports = new UserService(userRepository);

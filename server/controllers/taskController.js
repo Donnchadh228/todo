@@ -1,4 +1,5 @@
 const taskService = require('../service/taskService');
+const formatStatusForSort = require('../utils/formatStatusForSort.js');
 
 class TaskController {
   async createTask(req, res, next) {
@@ -31,6 +32,7 @@ class TaskController {
   async getAllTasks(req, res, next) {
     try {
       let { sortBy = 'createdAt', sortOrder = 'desc', limit, page, status } = req.query;
+
       const userId = req.user.id;
       page = parseInt(page, 10) || 1;
       limit = parseInt(limit, 10) || 9;
@@ -43,7 +45,7 @@ class TaskController {
         userId,
         sortBy,
         sortOrder,
-        status: status ? parseInt(status, 10) : undefined,
+        status: formatStatusForSort(status),
       };
 
       const tasks = await taskService.getAllTasks(options);

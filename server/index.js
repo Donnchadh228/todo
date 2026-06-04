@@ -26,14 +26,13 @@ const start = async () => {
   try {
     await sequelize.sync();
     await sequelize.authenticate();
-
     require('./jobs/tokenCleanup');
 
     app.listen(PORT, () => {
       console.log('Сервер работает на порту ' + PORT);
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

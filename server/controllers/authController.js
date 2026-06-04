@@ -8,13 +8,13 @@ class AuthController {
   async registration(req, res, next) {
     try {
       const { login, password } = req.body;
-      const userData = await authService.registration(login, password);
+      const authResult = await authService.registration(login, password);
 
-      setCookie(res, userData.refreshToken);
+      setCookie(res, authResult.refreshToken);
 
-      const { refreshToken, ...responseData } = userData;
+      const { refreshToken, ...userData } = authResult;
 
-      return res.json(responseData);
+      return res.json(userData);
     } catch (error) {
       console.log(error);
       next(error);
@@ -25,13 +25,12 @@ class AuthController {
     try {
       const { login, password } = req.body;
 
-      const userData = await authService.login(login, password);
+      const authResult = await authService.login(login, password);
+      setCookie(res, authResult.refreshToken);
 
-      setCookie(res, userData.refreshToken);
+      const { refreshToken, ...userData } = authResult;
 
-      const { refreshToken, ...responseData } = userData;
-
-      return res.json(responseData);
+      return res.json(userData);
     } catch (error) {
       console.log(error);
       next(error);
@@ -63,7 +62,7 @@ class AuthController {
       }
 
       const { accessToken, refreshToken: newRefreshToken } =
-        await tokenService.refreshToken(refreshToken);
+        await tokenService.refresh(refreshToken);
 
       setCookie(res, newRefreshToken);
       return res.json(accessToken);
@@ -77,7 +76,7 @@ class AuthController {
     try {
       const user = req.user;
 
-      const userData = userService.formatAuthResponse(user);
+      const userData = userService.getUserDto(user);
 
       return res.json(userData);
     } catch (error) {
