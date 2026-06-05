@@ -19,7 +19,7 @@ module.exports = function (tokenService) {
       req.user = userData;
       next();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return next(ApiError.Unauthorized());
     }
   };

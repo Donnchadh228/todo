@@ -1,4 +1,3 @@
-const { groupService } = require('../di.js');
 const formatStatusForSort = require('../utils/formatStatusForSort.js');
 const autoBind = require('auto-bind').default;
 
