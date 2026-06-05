@@ -1,12 +1,14 @@
 const { body } = require('express-validator');
-const validationMiddleware = require('../middleware/validationMiddleware');
+const { validationMiddleware } = require('../di.js');
 
 const groupValidation = [
   body('name')
     .trim()
     .notEmpty()
+    .withMessage('Group name must not be empty')
+    .bail()
     .isLength({ min: 2, max: 15 })
-    .withMessage('Название группы должно быть от 2 до 15 символов'),
+    .withMessage('Group name must be between 2 and 15 characters'),
 ];
 
 exports.groupValidation = [...groupValidation, validationMiddleware];

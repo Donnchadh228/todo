@@ -1,21 +1,24 @@
 const { body } = require('express-validator');
-const validationMiddleware = require('../middleware/validationMiddleware');
+const { validationMiddleware } = require('../di.js');
 
 const authValidation = [
   body('login')
     .trim()
     .notEmpty()
+    .withMessage('Login must not be empty')
+    .bail()
     .isLength({ min: 3, max: 8 })
-    .withMessage('Логин должен быть 3-8 символов')
+    .withMessage('Login must be between 3 and 8 characters')
     .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Только латинские буквы, цифры и _'),
+    .withMessage('Only Latin letters, numbers and _'),
 
   body('password')
     .trim()
     .notEmpty()
-    .withMessage('Пароль обязателен')
+    .withMessage('Password is required')
+    .bail()
     .isLength({ min: 3, max: 12 })
-    .withMessage('Пароль должен быть 3-12 символов'),
+    .withMessage('Password must be between 3 and 12 characters'),
 ];
 
 exports.authValidation = [...authValidation, validationMiddleware];

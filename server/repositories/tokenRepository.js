@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const { Token, User } = require('../models/indexModel.js');
 
 class TokenRepository {
-  async save(refreshToken, expiryDate, userId) {
+  async create(refreshToken, expiryDate, userId) {
     return Token.create({ refreshToken, expiryDate: expiryDate, userId });
   }
   async delete(refreshToken) {

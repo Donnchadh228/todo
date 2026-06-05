@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const ApiError = require('../expectations/apiError');
+const ApiError = require('../exceptions/apiError');
 const TokenRepository = require('../repositories/tokenRepository.js');
 
 class TokenService {
@@ -8,6 +8,7 @@ class TokenService {
   constructor(tokenRepository) {
     this.tokenRepository = tokenRepository;
   }
+
   generateToken(payload) {
     const accessToken = jwt.sign(payload, process.env.SECRETKEY, {
       expiresIn: process.env.ACCESS_TOKEN_TIME,
@@ -17,24 +18,6 @@ class TokenService {
     });
 
     return { accessToken, refreshToken };
-  }
-
-  async saveToken(userId, refreshToken) {
-    const decoded = jwt.decode(refreshToken);
-
-    const expiryDate = new Date(decoded.exp * 1000);
-    const tokens = await this.tokenRepository.save(refreshToken, expiryDate, userId);
-
-    return tokens;
-  }
-
-  async deleteToken(refreshToken) {
-    const deletedCount = await this.tokenRepository.delete(refreshToken);
-    return deletedCount > 0;
-  }
-
-  async findTokenWithUser(refreshToken) {
-    return await this.tokenRepository.findByTokenWithUser(refreshToken);
   }
 
   validateAccessToken(accessToken) {
@@ -57,30 +40,45 @@ class TokenService {
     }
   }
 
+  async saveToken(userId, refreshToken) {
+    const decoded = jwt.decode(refreshToken);
+    const expiryDate = new Date(decoded.exp * 1000);
+    return this.tokenRepository.create(refreshToken, expiryDate, userId);
+  }
+
+  async deleteToken(refreshToken) {
+    return this.tokenRepository.delete(refreshToken);
+  }
+
   async refresh(refreshToken) {
     const tokenRecord = await this.tokenRepository.findByTokenWithUser(refreshToken);
-    if (!tokenRecord) {
-      throw ApiError.Unauthorized('Неверный токен обновления');
+
+    if (!tokenRecord || !tokenRecord.user) {
+      throw ApiError.Unauthorized();
     }
 
-    const destroyToken = await this.tokenRepository.delete(refreshToken);
+    const isDeleted = await this.deleteToken(refreshToken);
 
-    if (!destroyToken) {
-      throw ApiError.BadRequest('ошибка при удалении токена');
+    if (!isDeleted) {
+      throw ApiError.BadRequest('Failed to delete old refresh token');
     }
 
-    const userFromDb = tokenRecord.user;
+    const user = tokenRecord.user;
     const payload = {
-      id: userFromDb.id,
-      login: userFromDb.login,
-      role: userFromDb.role,
+      id: user.id,
+      login: user.login,
+      role: user.role,
     };
 
-    const generatedTokens = this.generateToken(payload);
+    const newTokens = this.generateToken(payload);
 
-    await this.tokenRepository.save(userFromDb.id, generatedTokens.refreshToken);
+    const savedTokenResult = await this.saveToken(user.id, newTokens.refreshToken);
 
-    return generatedTokens;
+    if (!savedTokenResult) {
+      throw ApiError.BadRequest('Failed to save new refresh token');
+    }
+
+    return newTokens;
   }
 
   async enforceSessionLimit(userId) {
@@ -92,5 +90,4 @@ class TokenService {
     }
   }
 }
-const tokenRepository = new TokenRepository();
-module.exports = new TokenService(tokenRepository);
+module.exports = TokenService;

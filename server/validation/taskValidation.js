@@ -1,12 +1,14 @@
 const { body } = require('express-validator');
-const validationMiddleware = require('../middleware/validationMiddleware');
+const { validationMiddleware } = require('../di.js');
 
 const taskValidation = [
   body('name')
     .trim()
     .notEmpty()
+    .withMessage('Task name must not be empty')
+    .bail()
     .isLength({ min: 2, max: 25 })
-    .withMessage('Название задачи должно быть от 2 до 25 символов'),
+    .withMessage('Task name must be between 2 and 25 characters'),
 ];
 
 exports.taskValidation = [...taskValidation, validationMiddleware];
