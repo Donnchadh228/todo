@@ -1,13 +1,18 @@
-const taskService = require('../service/taskService');
+const { taskService } = require('../di.js');
+const formatStatusForFilter = require('../utils/formatStatusForFilter.js');
 const formatStatusForSort = require('../utils/formatStatusForSort.js');
-
+const autoBind = require('auto-bind').default;
 class TaskController {
+  constructor(taskService) {
+    this.taskService = taskService;
+    autoBind(this);
+  }
   async createTask(req, res, next) {
     try {
       const { name, groupId } = req.body;
       const userId = req.user.id;
 
-      const task = await taskService.createTask(name, userId, groupId);
+      const task = await this.taskService.createTask(name, userId, groupId);
 
       return res.json(task);
     } catch (error) {
@@ -21,7 +26,7 @@ class TaskController {
       const updates = req.body;
       const userId = req.user.id;
 
-      const updatedTask = await taskService.updateTask(id, updates, userId);
+      const updatedTask = await this.taskService.updateTask(id, updates, userId);
 
       return res.json(updatedTask);
     } catch (error) {
@@ -29,28 +34,30 @@ class TaskController {
     }
   }
 
-  async getAllTasks(req, res, next) {
+  async queryTasks(req, res, next) {
     try {
-      let { sortBy = 'createdAt', sortOrder = 'desc', limit, page, status } = req.query;
-
+      let { sortBy, sortOrder, limit, page, status } = req.query;
       const userId = req.user.id;
+
       page = parseInt(page, 10) || 1;
       limit = parseInt(limit, 10) || 9;
 
       let offset = (page - 1) * limit;
 
+      const sort = formatStatusForSort(sortBy, sortOrder);
+
       const options = {
         limit,
         offset,
         userId,
-        sortBy,
-        sortOrder,
-        status: formatStatusForSort(status),
+        sortBy: sort.sortBy,
+        sortOrder: sort.sortOrder,
+        status: formatStatusForFilter(status),
       };
 
-      const tasks = await taskService.getAllTasks(options);
+      const tasksWithOptions = await this.taskService.findTasksWithFilters(options);
 
-      return res.json(tasks);
+      return res.json(tasksWithOptions);
     } catch (error) {
       next(error);
     }
@@ -61,9 +68,9 @@ class TaskController {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const deletedTask = await taskService.deleteTask(id, userId);
+      const isDeleted = await this.taskService.deleteTask(id, userId);
 
-      return res.json(deletedTask);
+      return res.json(isDeleted);
     } catch (error) {
       next(error);
     }
@@ -74,7 +81,7 @@ class TaskController {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const task = await taskService.getTask(id, userId);
+      const task = await this.taskService.getTaskById(id, userId);
 
       return res.json(task);
     } catch (error) {
@@ -83,4 +90,4 @@ class TaskController {
   }
 }
 
-module.exports = new TaskController();
+module.exports = TaskController;

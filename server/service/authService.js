@@ -1,4 +1,4 @@
-const ApiError = require('../expectations/apiError.js');
+const ApiError = require('../exceptions/apiError.js');
 const tokenService = require('./tokenService.js');
 const userService = require('./userService.js');
 const bcrypt = require('bcrypt');
@@ -9,48 +9,47 @@ class AuthService {
     this.tokenService = tokenService;
   }
 
-  generateAuthResponse(userData, generatedJWT) {
+  _generateAuthResponse(userData, generatedJWT) {
     return { user: userData, ...generatedJWT };
+  }
+  _issueTokensForUser(userData) {
+    const payload = this.userService.getUserDto(userData);
+    const generatedJWT = this.tokenService.generateToken(payload);
+    return this._generateAuthResponse(payload, generatedJWT);
   }
 
   async registration(login, password) {
     const newUser = await this.userService.createUser(login, password);
 
-    // Выделить в отдельный общий метод
-    const payload = this.userService.getUserDto(newUser);
-    const generatedJWT = this.tokenService.generateToken(payload);
-    const authResponse = this.generateAuthResponse(payload, generatedJWT);
+    const authResponse = this._issueTokensForUser(newUser);
 
-    await this.tokenService.saveToken(payload.id, authResponse.refreshToken);
+    await this.tokenService.saveToken(authResponse.user.id, authResponse.refreshToken);
     return authResponse;
   }
 
   async login(login, password) {
     const user = await this.userService.findUserByLogin(login);
+
     if (!user) {
-      throw ApiError.BadRequest('Неверный логин');
+      throw ApiError.BadRequest('Login incorrect');
     }
 
     const isPassEqual = await bcrypt.compare(password, user.password);
     if (!isPassEqual) {
-      throw ApiError.BadRequest('Неверный пароль');
+      throw ApiError.BadRequest('Password incorrect');
     }
 
-    // Выделить в отдельный общий метод
-    const payload = this.userService.getUserDto(user);
-    const generatedJWT = this.tokenService.generateToken(payload);
-    const authResponse = this.generateAuthResponse(payload, generatedJWT);
+    const authResponse = this._issueTokensForUser(user);
 
     await this.tokenService.enforceSessionLimit(user.id);
-    await this.tokenService.saveToken(payload.id, authResponse.refreshToken);
+    await this.tokenService.saveToken(authResponse.user.id, authResponse.refreshToken);
 
     return authResponse;
   }
 
   async logout(refreshToken) {
-    const token = await this.tokenService.deleteToken(refreshToken);
-    return token;
+    return this.tokenService.deleteToken(refreshToken);
   }
 }
 
-module.exports = new AuthService(userService, tokenService);
+module.exports = AuthService;

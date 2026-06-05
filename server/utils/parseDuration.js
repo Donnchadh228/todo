@@ -9,7 +9,7 @@ module.exports = function (duration) {
 
   const match = duration.match(/^(\d+)([smhdy])$/);
   if (!match) {
-    throw new Error(`Неверный формат длительности: ${duration}.`);
+    throw new Error(`Invalid duration format: ${duration}.`);
   }
 
   const value = parseInt(match[1]);

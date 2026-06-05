@@ -1,12 +1,18 @@
-const groupService = require('../service/groupService');
+const { groupService } = require('../di.js');
+const formatStatusForSort = require('../utils/formatStatusForSort.js');
+const autoBind = require('auto-bind').default;
 
 class GroupController {
+  constructor(groupService) {
+    this.groupService = groupService;
+    autoBind(this);
+  }
   async createGroup(req, res, next) {
     try {
       const { name } = req.body;
       const userId = req.user.id;
 
-      const group = await groupService.createGroup(name, userId);
+      const group = await this.groupService.createGroup(name, userId);
 
       return res.json(group);
     } catch (error) {
@@ -18,35 +24,36 @@ class GroupController {
       const { id } = req.params;
       const userId = req.user.id;
 
-      const deletedGroup = await groupService.deleteGroup(id, userId);
+      const isDeleted = await this.groupService.deleteGroup(id, userId);
 
-      return res.json(deletedGroup);
+      return res.json(isDeleted);
     } catch (error) {
       next(error);
     }
   }
-  async getAllGroups(req, res, next) {
+  async queryGroups(req, res, next) {
     try {
-      let { limit, page, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
-      const { id: userId } = req.user;
+      let { limit, page, sortBy, sortOrder } = req.query;
+      const userId = req.user.id;
 
       page = parseInt(page, 10) || 1;
       limit = parseInt(limit, 10) || 8;
 
       let offset = (page - 1) * limit;
+      const sort = formatStatusForSort(sortBy, sortOrder);
 
       const options = {
         limit,
         offset,
         userId,
         page,
-        sortBy,
-        sortOrder,
+        sortBy: sort.sortBy,
+        sortOrder: sort.sortOrder,
       };
 
-      const groups = await groupService.getAllGroups(options);
+      const groupsWithOptions = await this.groupService.findGroupsByOptions(options);
 
-      return res.json(groups);
+      return res.json(groupsWithOptions);
     } catch (error) {
       next(error);
     }
@@ -58,7 +65,7 @@ class GroupController {
 
       const userId = req.user.id;
 
-      const updatedGroup = await groupService.updateGroup(id, name, userId);
+      const updatedGroup = await this.groupService.updateGroup(id, userId, name);
 
       return res.json(updatedGroup);
     } catch (error) {
@@ -67,4 +74,4 @@ class GroupController {
   }
 }
 
-module.exports = new GroupController();
+module.exports = GroupController;

@@ -1,12 +1,12 @@
 const Router = require('express');
 const router = new Router();
 
-const taskController = require('../controllers/taskController');
+const { taskController } = require('../di.js');
 const { taskValidation } = require('../validation/taskValidation');
 
 router.post('/', taskValidation, taskController.createTask);
 
-router.get('/', taskController.getAllTasks);
+router.get('/', taskController.queryTasks);
 router.get('/:id', taskController.getTask);
 
 router.put('/:id', taskValidation, taskController.updateTask);

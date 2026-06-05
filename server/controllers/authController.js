@@ -1,14 +1,20 @@
-const ApiError = require('../expectations/apiError.js');
-const authService = require('../service/authService.js');
-const tokenService = require('../service/tokenService.js');
-const userService = require('../service/userService.js');
+const ApiError = require('../exceptions/apiError.js');
 const setCookie = require('../utils/setRefreshTokenCookie.js');
+const autoBind = require('auto-bind').default;
 
 class AuthController {
+  constructor(authService, tokenService, userService) {
+    this.authService = authService;
+    this.tokenService = tokenService;
+    this.userService = userService;
+
+    autoBind(this);
+  }
+
   async registration(req, res, next) {
     try {
       const { login, password } = req.body;
-      const authResult = await authService.registration(login, password);
+      const authResult = await this.authService.registration(login, password);
 
       setCookie(res, authResult.refreshToken);
 
@@ -25,7 +31,8 @@ class AuthController {
     try {
       const { login, password } = req.body;
 
-      const authResult = await authService.login(login, password);
+      const authResult = await this.authService.login(login, password);
+
       setCookie(res, authResult.refreshToken);
 
       const { refreshToken, ...userData } = authResult;
@@ -43,11 +50,12 @@ class AuthController {
       if (!refreshToken) {
         return res.json();
       }
-      const token = await authService.logout(refreshToken);
+
+      await this.authService.logout(refreshToken);
 
       res.clearCookie('refreshToken');
 
-      return res.json(token);
+      return res.json(true);
     } catch (error) {
       console.log(error);
       next(error);
@@ -58,13 +66,14 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       if (!refreshToken) {
-        throw ApiError.Unauthorized('Пользователь не авторизован');
+        throw ApiError.Unauthorized();
       }
 
       const { accessToken, refreshToken: newRefreshToken } =
-        await tokenService.refresh(refreshToken);
+        await this.tokenService.refresh(refreshToken);
 
       setCookie(res, newRefreshToken);
+
       return res.json(accessToken);
     } catch (error) {
       console.log(error);
@@ -76,7 +85,7 @@ class AuthController {
     try {
       const user = req.user;
 
-      const userData = userService.getUserDto(user);
+      const userData = this.userService.getUserDto(user);
 
       return res.json(userData);
     } catch (error) {
@@ -86,4 +95,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+module.exports = AuthController;

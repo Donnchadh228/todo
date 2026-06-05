@@ -1,4 +1,4 @@
-const ApiError = require('../expectations/apiError.js');
+const ApiError = require('../exceptions/apiError.js');
 const GroupRepository = require('../repositories/groupRepository.js');
 
 class GroupService {
@@ -6,28 +6,30 @@ class GroupService {
     this.groupRepository = groupRepository;
   }
 
-  async createGroup(title, userId) {
-    const group = await this.groupRepository.create(title, userId);
-
-    return group;
+  async createGroup(name, userId) {
+    return this.groupRepository.create(name, userId);
   }
 
-  async updateGroup(id, userId, newTitle) {
-    const updatedGroup = await this.groupRepository.update(id, userId, newTitle);
+  async updateGroup(id, userId, newName) {
+    const updatedGroup = await this.groupRepository.update(id, userId, newName);
+
     if (!updatedGroup) {
-      throw ApiError.Forbidden('Такой группы нет или у вас нет к ней прав');
+      throw ApiError.NotFound();
     }
 
     return updatedGroup;
   }
 
   async deleteGroup(id, userId) {
-    const group = await this.groupRepository.delete(id, userId);
+    const isDeleted = await this.groupRepository.delete(id, userId);
+    if (!isDeleted) {
+      throw ApiError.NotFound();
+    }
 
-    return group;
+    return isDeleted;
   }
 
-  async getAllGroups(options) {
+  async findGroupsByOptions(options) {
     const { limit, page, userId, sortBy, sortOrder, offset } = options;
     const whereClause = { userId };
     const groups = await this.groupRepository.findAndCount({
@@ -41,15 +43,14 @@ class GroupService {
     return { ...groups, limit, currentPage: page };
   }
 
-  async getGroup(id, userId) {
+  async getGroupById(id, userId) {
     const group = await this.groupRepository.findById(id, userId);
     if (!group) {
-      throw ApiError.Forbidden('Такой группы не существует или у вас нет доступа к ней');
+      throw ApiError.NotFound();
     }
 
     return group;
   }
 }
 
-const groupRepository = new GroupRepository();
-module.exports = new GroupService(groupRepository);
+module.exports = GroupService;

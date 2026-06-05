@@ -1,5 +1,5 @@
+create -> return a created entity
+find -> return a entity or null
+update -> return a updated entity or null
 delete -> return boolean ( true - deleted, false - not found)
-save -> return entity 
-update -> return updated entity or null
-find -> return entity or null
-count -> return number 
+count -> return number

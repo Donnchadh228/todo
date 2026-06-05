@@ -6,7 +6,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { sequelize } = require('./DB/db.js');
 const router = require('./router/indexRouter');
-const errorMiddleware = require('./middleware/errorMiddleware');
+const { errorMiddleware } = require('./di.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,7 +29,7 @@ const start = async () => {
     require('./jobs/tokenCleanup');
 
     app.listen(PORT, () => {
-      console.log('Сервер работает на порту ' + PORT);
+      console.log('Server is running on port ' + PORT);
     });
   } catch (error) {
     console.error(error);

@@ -1,47 +1,37 @@
-const ApiError = require('../expectations/apiError.js');
-const groupService = require('./groupService.js');
-const TaskRepository = require('../repositories/taskRepository.js');
-const GroupRepository = require('../repositories/groupRepository.js');
+const ApiError = require('../exceptions/apiError.js');
 
 class TaskService {
-  constructor(taskRepository, groupRepository) {
+  constructor(taskRepository, groupService) {
     this.taskRepository = taskRepository;
-    this.groupRepository = groupRepository;
+    this.groupService = groupService;
   }
-  async createTask(name, userId, groupId) {
-    const task = await this.taskRepository.create(name, userId, groupId);
 
-    return task;
+  async createTask(name, userId, groupId) {
+    return this.taskRepository.create(name, userId, groupId);
   }
 
   async updateTask(taskId, updates, userId) {
-    try {
-      const newGroupId = updates.groupId;
+    const newGroupId = updates.groupId;
 
-      // Если нужно перенести задачу в другую группу
-      if (newGroupId) {
-        const group = await this.groupRepository.findById(newGroupId, userId);
-        if (!group) {
-          throw ApiError.NotFound('Группа не найдена');
-        }
+    // if need to change group, check if the new group exists and belongs to the user
+    if (newGroupId) {
+      const group = await this.groupService.getGroupById(newGroupId, userId);
 
-        if (!group || group.userId !== userId) {
-          throw ApiError.Forbidden();
-        }
+      if (!group) {
+        throw ApiError.NotFound();
       }
-
-      const task = await this.taskRepository.update(taskId, userId, updates);
-      if (!task) {
-        throw ApiError.NotFound('Задача не найдена или у вас отсутствует доступ');
-      }
-
-      return task;
-    } catch (error) {
-      console.log(error);
     }
+
+    const task = await this.taskRepository.update(taskId, userId, updates);
+    if (!task) {
+      throw ApiError.NotFound();
+    }
+
+    console.log(2);
+    return task;
   }
 
-  async getAllTasks(options) {
+  async findTasksByOptions(options) {
     const { offset, userId, limit, sortBy, sortOrder, status } = options;
 
     let whereClause = { userId };
@@ -64,22 +54,21 @@ class TaskService {
     const task = await this.taskRepository.delete(taskId, userId);
 
     if (!task) {
-      throw ApiError.BadRequest('Данной задачи нет или у вас нет доступа к ней');
+      throw ApiError.NotFound();
     }
-    console.log(task);
+
     return task;
   }
 
-  async getTask(taskId, userId) {
+  async getTaskById(taskId, userId) {
     const task = await this.taskRepository.findById(taskId, userId);
 
     if (!task) {
-      throw ApiError.BadRequest('Такой задачи не существует или у вас нет доступа к ней');
+      throw ApiError.NotFound();
     }
 
     return task;
   }
 }
-const taskRepository = new TaskRepository();
-const groupRepository = new GroupRepository();
-module.exports = new TaskService(taskRepository, groupRepository);
+
+module.exports = TaskService;
