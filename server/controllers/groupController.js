@@ -25,7 +25,7 @@ class GroupController {
 
       const isDeleted = await this.groupService.deleteGroup(id, userId);
 
-      return res.json(isDeleted);
+      return res.json({ deleted: isDeleted });
     } catch (error) {
       next(error);
     }
