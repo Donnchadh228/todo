@@ -27,7 +27,6 @@ class TaskService {
       throw ApiError.NotFound();
     }
 
-    console.log(2);
     return task;
   }
 

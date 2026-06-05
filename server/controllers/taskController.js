@@ -1,4 +1,3 @@
-const { taskService } = require('../di.js');
 const formatStatusForFilter = require('../utils/formatStatusForFilter.js');
 const formatStatusForSort = require('../utils/formatStatusForSort.js');
 const autoBind = require('auto-bind').default;
@@ -55,7 +54,7 @@ class TaskController {
         status: formatStatusForFilter(status),
       };
 
-      const tasksWithOptions = await this.taskService.findTasksWithFilters(options);
+      const tasksWithOptions = await this.taskService.findTasksByOptions(options);
 
       return res.json(tasksWithOptions);
     } catch (error) {

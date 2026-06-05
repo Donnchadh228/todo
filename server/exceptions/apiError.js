@@ -13,14 +13,14 @@ module.exports = class ApiError extends Error {
   }
 
   static Unauthorized() {
-    return new ApiError(401, 'User is not authorized');
+    return new ApiError(401, 'Unauthorized');
   }
 
   static Forbidden() {
-    return new ApiError(403, 'Access denied');
+    return new ApiError(403, 'Access Denied');
   }
 
   static NotFound() {
-    return new ApiError(404, 'Not found');
+    return new ApiError(404, 'Not Found');
   }
 };

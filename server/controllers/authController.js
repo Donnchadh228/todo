@@ -22,7 +22,7 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error);
     }
   }
@@ -39,7 +39,7 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error);
     }
   }
@@ -57,7 +57,7 @@ class AuthController {
 
       return res.json(true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error);
     }
   }
@@ -76,7 +76,7 @@ class AuthController {
 
       return res.json(accessToken);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error);
     }
   }
@@ -89,7 +89,7 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error);
     }
   }

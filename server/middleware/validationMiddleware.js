@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
       return next(ApiError.BadRequest('Validation failed', errors.array()));
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
   next();
 };

@@ -32,7 +32,6 @@ const AuthController = require('./controllers/authController.js');
 const GroupController = require('./controllers/groupController.js');
 const TaskController = require('./controllers/taskController.js');
 
-// maybe rewrite to use only authService in controller, and move tokenService and userService logic to authService
 const authController = new AuthController(authService, tokenService, userService);
 const groupController = new GroupController(groupService);
 const taskController = new TaskController(taskService);
