@@ -55,7 +55,7 @@ class AuthController {
 
       res.clearCookie('refreshToken');
 
-      return res.json(true);
+      return res.json({ logout: true });
     } catch (error) {
       console.error(error);
       next(error);
@@ -74,7 +74,7 @@ class AuthController {
 
       setCookie(res, newRefreshToken);
 
-      return res.json(accessToken);
+      return res.json({ accessToken });
     } catch (error) {
       console.error(error);
       next(error);
